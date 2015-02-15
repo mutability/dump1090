@@ -621,7 +621,7 @@ function refreshSelected() {
 		$('#dump1090_total_ac').text(TrackedAircraft);
 		$('#dump1090_total_ac_positions').text(TrackedAircraftPositions);
 		$('#dump1090_total_history').text(TrackedHistorySize);
-		$('#dump1090_max_distance').text(format_distance_long(LargestDistance));
+		$('#dump1090_max_distance').text(format_distance_long(MaxDistance));
 	
 		var message_rate = null;
 		
@@ -637,14 +637,14 @@ function refreshSelected() {
 		if (message_rate !== null){
 			$('#dump1090_message_rate').text(message_rate.toFixed(1));
 			
-			if(message_rate > HighestMsgPerSec){
-				HighestMsgPerSec = message_rate;
+			if(message_rate > MaxMessagesPerSec){
+				MaxMessagesPerSec = message_rate;
 			}
 		} else {
 			$('#dump1090_message_rate').text("n/a");
 		}
 	
-		$('#dump1090_max_msg_rate').text(HighestMsgPerSec.toFixed(1));
+		$('#dump1090_max_message_rate').text(MaxMessagesPerSec.toFixed(1));
 		
 		return;
 	}
@@ -727,8 +727,8 @@ function refreshTableInfo() {
 		if (!tableplane.visible) {
 			tableplane.tr.className = "plane_table_row hidden";
 		} else {
-			if(tableplane.sitedist > LargestDistance) {
-				LargestDistance = tableplane.sitedist;
+			if(tableplane.sitedist > MaxDistance) {
+				MaxDistance = tableplane.sitedist;
 			}
 			
 			TrackedAircraft++;
@@ -913,8 +913,8 @@ function toggleFollowSelected() {
 
 function resetMap() {
 	// Reset max range and message values
-	LargestDistance = 0.0;
-	HighestMsgPerSec = 0.0;
+	MaxDistance = 0.0;
+	MaxMessagesPerSec = 0.0;
 	
 	// Reset localStorage values and map settings
 	localStorage['CenterLat'] = CenterLat = DefaultCenterLat;
