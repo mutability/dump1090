@@ -911,11 +911,12 @@ function toggleFollowSelected() {
 	refreshSelected();
 }
 
-function resetMap() {
-	// Reset max range and message values
+function resetMax() {
 	MaxDistance = 0.0;
 	MaxMessagesPerSec = 0.0;
-	
+}
+
+function resetMap() {
 	// Reset localStorage values and map settings
 	localStorage['CenterLat'] = CenterLat = DefaultCenterLat;
 	localStorage['CenterLon'] = CenterLon = DefaultCenterLon;
