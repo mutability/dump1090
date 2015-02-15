@@ -7,6 +7,9 @@ var PlanesOrdered = [];
 var SelectedPlane = null;
 var FollowSelected = false;
 
+var HighestMsgPerSec = 0.0;
+var LargestDistance = 0.0;
+
 var SpecialSquawks = {
         '7500' : { cssClass: 'squawk7500', markerColor: 'rgb(255, 85, 85)', text: 'Aircraft Hijacking' },
         '7600' : { cssClass: 'squawk7600', markerColor: 'rgb(0, 255, 255)', text: 'Radio Failure' },
@@ -85,6 +88,11 @@ function processReceiverUpdate(data) {
                         PlanesOrdered.push(plane);
 		}
 
+		// Edit by xforce30164 -> check for max distance
+		if(plane.sitedist > LargestDistance){
+			LargestDistance = plane.sitedist;
+		}
+		
 		// Call the function update
 		plane.updateData(now, ac);
 	}
@@ -614,6 +622,7 @@ function refreshSelected() {
                 $('#dump1090_total_ac').text(TrackedAircraft);
                 $('#dump1090_total_ac_positions').text(TrackedAircraftPositions);
                 $('#dump1090_total_history').text(TrackedHistorySize);
+                $('#dump1090_max_distance').text(format_distance_brief(LargestDistance));
 
                 var message_rate = null;
                 if (MessageCountHistory.length > 1) {
@@ -622,11 +631,17 @@ function refreshSelected() {
                         if (message_time_delta > 0)
                                 message_rate = message_count_delta / message_time_delta;
                 }
-                
-                if (message_rate !== null)
+
+                if (message_rate !== null){
                         $('#dump1090_message_rate').text(message_rate.toFixed(1));
+						if(message_rate > HighestMsgPerSec){
+							HighestMsgPerSec = message_rate;
+						}
+                }
                 else
                         $('#dump1090_message_rate').text("n/a");
+                        
+                $('#dump1090_max_msg_rate').text(HighestMsgPerSec.toFixed(1));
                         
                 return;
         }
