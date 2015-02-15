@@ -163,6 +163,10 @@ static int doGlobalCPR(struct aircraft *a, int fflag, int surface)
         double range = greatcircle(Modes.fUserLat, Modes.fUserLon, lat, lon);
         if (range > Modes.maxRange)
             return (-2); // we consider an out-of-range value to be bad data
+
+        if(range > Modes.largestRange){
+        	Modes.largestRange = range;
+        }
     }
 
     a->lat = lat;
