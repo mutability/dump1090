@@ -292,7 +292,7 @@ PlaneObject.prototype.updateTick = function(receiver_timestamp, last_timestamp) 
 			//console.log("hiding " + this.icao);
 			this.clearMarker();
 			this.visible = false;
-			if (SelectedPlane == this.icao {
+			if (SelectedPlane == this.icao) {
 				selectPlaneByHex(null,false);
 			}
 		}
