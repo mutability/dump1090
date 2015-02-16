@@ -15,8 +15,10 @@ Metric = false; // true or false
 // -- Highscore Settings ----------------------------------
 // Enable or disable highscore storage through cookies
 SaveHighscores = true;
-// how many days in the past to store?
-SaveLastsForDays = 365;
+// how many days must the cookies last
+SaveLastsForDays = 365
+// how many previous cookies to keep?
+SaveLastNumDays = 31;
 
 // -- Map settings ----------------------------------------
 // These settings are overridden by any position information

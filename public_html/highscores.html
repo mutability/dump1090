@@ -1,0 +1,53 @@
+<html>
+	<head>
+		<meta charset="utf-8"/>
+		<link rel="stylesheet" type="text/css" href="style.css" />
+		<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
+		
+		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+		<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
+		
+		<script type="text/javascript" src="config.js"></script>
+		<script type="text/javascript" src="script.js"></script>
+		<script type="text/javascript">
+			function loadHistoricalHighscores() {
+				checkCookie();
+			};
+			
+			//cookie HistorySize = ....;
+		</script>
+		
+		<title>DUMP1090</title>
+	</head>
+	
+	<body onload="loadHistoricalHighscores()">		
+		<div id="highscores_container">
+			<table id="tableinfo" width="100%">
+				<thead style="background-color: #BBBBBB; cursor: pointer;">
+					<td id="icao" onclick="sortByICAO();">ICAO</td>
+					<td id="flight" onclick="sortByFlight();">Flight</td>
+					<td id="squawk" onclick="sortBySquawk();" align="right">Squawk</td>
+					<td id="altitude" onclick="sortByAltitude();" align="right">Altitude</td>
+					<td id="speed" onclick="sortBySpeed();" align="right">Speed</td>
+					<td id="distance" onclick="sortByDistance();" align="right">Distance</td>
+					<td id="track" onclick="sortByTrack();" align="right">Track</td>
+					<td id="msgs" onclick="sortByMsgs();" align="right">Msgs</td>
+					<td id="seen" onclick="sortBySeen();" align="right">Age</td>
+				</thead>
+				<tbody>
+					<tr id="plane_row_template" class="plane_table_row hidden">
+						<td>ICAO</td>
+						<td>FLIGHT</td>
+						<td align="right">SQUAWK</td>
+						<td align="right">ALTITUDE</td>
+						<td align="right">SPEED</td>
+						<td align="right">DISTANCE</td>
+						<td align="right">TRACK</td>
+						<td align="right">MSGS</td>
+						<td align="right">SEEN</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</body>
+</html>

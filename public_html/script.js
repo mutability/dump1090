@@ -659,7 +659,7 @@ function refreshSelected() {
 		}
 	
 		$('#dump1090_max_distance').text(format_distance_long(MaxDistance));
-		$('#dump1090_max_message_rate').text(MaxMessagesPerSec.toFixed(1));
+		$('#dump1090_max_message_rate').text((MaxMessagesPerSec * 1.0).toFixed(1));
 		
 		return;
 	}
@@ -796,6 +796,8 @@ function refreshTableInfo() {
 
 //
 // ---- Highscore sace/load functions through cookies --- based on http://www.w3schools.com/js/js_cookies.asp
+// Add some checking algorithm that will monitor date changes, create history cookie, update history_size cookie, and create new current highscore cookie?
+// also keep some all-time cookie?
 //
 function setCookie(cname, cvalue, exdays) {
     var d = new Date();
@@ -821,8 +823,16 @@ function getCookie(cname) {
 
 function checkCookie() {
     MaxDistance = getCookie("range");
-    MaxMessagesPerSec = getCookie("msgrate");    
+    MaxMessagesPerSec = getCookie("msgrate");
     console.log("found highscore cookies -> range = " + MaxDistance + " and msg_rate = " + MaxMessagesPerSec);
+    
+    if(MaxDistance > 0.0) {
+        $('#dump1090_max_distance').text(format_distance_long(MaxDistance));
+    }
+    
+    if(MaxMessagesPerSec > 0.0) {
+        $('#dump1090_max_message_rate').text((MaxMessagesPerSec * 1.0).toFixed(1));
+    }
 }
 
 //
