@@ -12,6 +12,12 @@
 // in the detailed plane info.
 Metric = false; // true or false
 
+// -- Highscore Settings ----------------------------------
+// Enable or disable highscore storage through cookies
+SaveHighscores = true;
+// how many days in the past to store?
+SaveLastsForDays = 365;
+
 // -- Map settings ----------------------------------------
 // These settings are overridden by any position information
 // provided by dump1090 itself. All positions are in decimal

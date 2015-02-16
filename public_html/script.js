@@ -158,12 +158,13 @@ function fetchData() {
 	});
 }
 
-//var PositionHistorySize = 0; // move to top?
-
 function initialize() {
 	// Set page basics
 	$("head title").text(PageName);
 	$("#infoblock_name").text(PageName);
+	
+	// Check if we have saved highscores cookies
+	checkCookie();
 	
 	PlaneRowTemplate = document.getElementById("plane_row_template");
 	
@@ -222,9 +223,6 @@ function initialize() {
 		start_load_history();
 	});
 }
-
-//var CurrentHistoryFetch = null; // move to top?
-//var PositionHistoryBuffer = []; // move to top?
 
 function start_load_history() {	
 	if (PositionHistorySize > 0) {
@@ -493,8 +491,6 @@ function reaper() {
 // formatting helpers
 //
 
-//var TrackDirections = ["North","Northeast","East","Southeast","South","Southwest","West","Northwest"]; //move to top?
-
 // track in degrees (0..359)
 function format_track_brief(track) {
 	if (track === null){
@@ -635,7 +631,7 @@ function refreshSelected() {
 		$('#dump1090_total_ac').text(TrackedAircraft);
 		$('#dump1090_total_ac_positions').text(TrackedAircraftPositions);
 		$('#dump1090_total_history').text(TrackedHistorySize);
-		$('#dump1090_max_distance').text(format_distance_long(MaxDistance));
+		
 	
 		var message_rate = null;
 		
@@ -653,11 +649,16 @@ function refreshSelected() {
 			
 			if(message_rate > MaxMessagesPerSec){
 				MaxMessagesPerSec = message_rate;
+				
+				if(SaveHighscores) {
+					setCookie("msgrate",MaxMessagesPerSec,SaveLastsForDays);
+				}
 			}
 		} else {
 			$('#dump1090_message_rate').text("n/a");
 		}
 	
+		$('#dump1090_max_distance').text(format_distance_long(MaxDistance));
 		$('#dump1090_max_message_rate').text(MaxMessagesPerSec.toFixed(1));
 		
 		return;
@@ -743,6 +744,10 @@ function refreshTableInfo() {
 		} else {
 			if(tableplane.sitedist > MaxDistance) {
 				MaxDistance = tableplane.sitedist;
+				
+				if(SaveHighscores) {
+					setCookie("range",MaxDistance,SaveLastsForDays);
+				}
 			}
 			
 			TrackedAircraft++;
@@ -790,6 +795,37 @@ function refreshTableInfo() {
 }
 
 //
+// ---- Highscore sace/load functions through cookies --- based on http://www.w3schools.com/js/js_cookies.asp
+//
+function setCookie(cname, cvalue, exdays) {
+    var d = new Date();
+    d.setTime(d.getTime() + (exdays*24*60*60*1000));
+    var expires = "expires="+d.toUTCString();
+    document.cookie = cname + "=" + cvalue + "; " + expires;
+}
+
+function getCookie(cname) {
+    var name = cname + "=";
+    var ca = document.cookie.split(';');
+    for(var i=0; i<ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0) == ' ') {
+            c = c.substring(1);
+		}
+         if (c.indexOf(name) == 0) {
+            return c.substring(name.length,c.length);
+		 }
+    }
+    return "";
+}
+
+function checkCookie() {
+    MaxDistance = getCookie("range");
+    MaxMessagesPerSec = getCookie("msgrate");    
+    console.log("found highscore cookies -> range = " + MaxDistance + " and msg_rate = " + MaxMessagesPerSec);
+}
+
+//
 // ---- table sorting ----
 //
 
@@ -820,11 +856,6 @@ function sortByDistance() { sortBy('sitedist',compareNumeric, function(x) { retu
 function sortByTrack()    { sortBy('track',   compareNumeric, function(x) { return x.track; }); }
 function sortByMsgs()     { sortBy('msgs',    compareNumeric, function(x) { return x.messages; }); }
 function sortBySeen()     { sortBy('seen',    compareNumeric, function(x) { return x.seen; }); }
-
-//var sortId = ''; // move to top?
-//var sortCompare = null; // move to top?
-//var sortExtract = null; // move to top?
-//var sortAscending = true; // move to top?
 
 function sortFunction(x,y) {
 	var xv = x._sort_value;
@@ -928,6 +959,11 @@ function toggleFollowSelected() {
 function resetMax() {
 	MaxDistance = 0.0;
 	MaxMessagesPerSec = 0.0;
+	
+	if(SaveHighscores) {
+		setCookie("range",0.0,SaveLastsForDays);
+		setCookie("msgrate",0.0,SaveLastsForDays);
+	}
 }
 
 function resetMap() {
