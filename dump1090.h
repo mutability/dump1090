@@ -337,7 +337,6 @@ struct {                             // Internal state
     double fUserLon;                // Users receiver/antenna lat/lon needed for initial surface location
     int    bUserFlags;              // Flags relating to the user details
     double maxRange;                // Absolute maximum decoding range, in *metres*
-    double largestRange;			// Double to store the largest measured range
 
     // State tracking
     struct aircraft *aircrafts;

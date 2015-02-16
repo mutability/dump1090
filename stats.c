@@ -78,8 +78,6 @@ void display_stats(struct stats *st) {
 
     if (!Modes.net_only) {
         printf("Local receiver:\n");
-        printf("  %.1f largest distance\n",                    st->largest_distance);
-
         printf("  %u sample blocks processed\n",                    st->blocks_processed);
         printf("  %u sample blocks dropped\n",                      st->blocks_dropped);
 

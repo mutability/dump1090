@@ -956,8 +956,7 @@ char *generateReceiverJson(const char *url_path, int *len)
                  "\"version\" : \"%s\", "
                  "\"refresh\" : %.0f, "
                  "\"history\" : %d",
-				 "\"maxrange\" : %.1f"
-                 MODES_DUMP1090_VERSION, 1.0*Modes.json_interval, history_size, Modes.largestRange);
+                 MODES_DUMP1090_VERSION, 1.0*Modes.json_interval, history_size);
 
     if (Modes.json_location_accuracy && (Modes.fUserLat != 0.0 || Modes.fUserLon != 0.0)) {
         if (Modes.json_location_accuracy == 1) {
