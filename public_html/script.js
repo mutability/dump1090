@@ -39,6 +39,20 @@ var FetchPending = null;
 
 var MessageCountHistory = [];
 
+// Sorting variables
+var sortId = '';
+var sortCompare = null;
+var sortExtract = null;
+var sortAscending = true;
+
+// Formatting variables
+var TrackDirections = ["North","Northeast","East","Southeast","South","Southwest","West","Northwest"];
+
+// History variables
+var CurrentHistoryFetch = null;
+var PositionHistoryBuffer = [];
+var PositionHistorySize = 0;
+
 var NBSP='\u00a0';
 var DEGREES='\u00b0'
 var UP_TRIANGLE='\u25b2'; // U+25B2 BLACK UP-POINTING TRIANGLE
@@ -144,7 +158,7 @@ function fetchData() {
 	});
 }
 
-var PositionHistorySize = 0; // move to top?
+//var PositionHistorySize = 0; // move to top?
 
 function initialize() {
 	// Set page basics
@@ -209,8 +223,8 @@ function initialize() {
 	});
 }
 
-var CurrentHistoryFetch = null; // move to top?
-var PositionHistoryBuffer = []; // move to top?
+//var CurrentHistoryFetch = null; // move to top?
+//var PositionHistoryBuffer = []; // move to top?
 
 function start_load_history() {	
 	if (PositionHistorySize > 0) {
@@ -479,7 +493,7 @@ function reaper() {
 // formatting helpers
 //
 
-var TrackDirections = ["North","Northeast","East","Southeast","South","Southwest","West","Northwest"]; //move to top?
+//var TrackDirections = ["North","Northeast","East","Southeast","South","Southwest","West","Northwest"]; //move to top?
 
 // track in degrees (0..359)
 function format_track_brief(track) {
@@ -807,10 +821,10 @@ function sortByTrack()    { sortBy('track',   compareNumeric, function(x) { retu
 function sortByMsgs()     { sortBy('msgs',    compareNumeric, function(x) { return x.messages; }); }
 function sortBySeen()     { sortBy('seen',    compareNumeric, function(x) { return x.seen; }); }
 
-var sortId = ''; // move to top?
-var sortCompare = null; // move to top?
-var sortExtract = null; // move to top?
-var sortAscending = true; // move to top?
+//var sortId = ''; // move to top?
+//var sortCompare = null; // move to top?
+//var sortExtract = null; // move to top?
+//var sortAscending = true; // move to top?
 
 function sortFunction(x,y) {
 	var xv = x._sort_value;
