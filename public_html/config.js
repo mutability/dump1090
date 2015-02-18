@@ -5,12 +5,15 @@
 //
 // --------------------------------------------------------
 
-// -- Output Settings -------------------------------------
-// Show metric values
-// This controls the units used in the plane table,
-// and whether metric or imperial units are shown first
-// in the detailed plane info.
-Metric = false; // true or false
+// -- Formatting Settings ---------------------------------
+// Enable or disable Metric and`/or Imperial formatting
+// Controls the units shown on the map and in the table
+// The PreferMetric is used to determine which value to
+// show in the compact mode when both Imperial and Metric
+// are enabled.
+PreferMetric = true;
+EnableMetric = true;
+EnableImperial = false;
 
 // -- Highscore Settings ----------------------------------
 // Enable or disable highscore storage through cookies
