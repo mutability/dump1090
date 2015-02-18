@@ -11,16 +11,154 @@
 		<script type="text/javascript" src="script.js"></script>
 		<script type="text/javascript">
 			function loadHistoricalHighscores() {
-				checkCookie();
+				
 			};
 			
+			function newCookie() {
+				createArrayCookie("test",1,10);
+			}
+			
+			function addCookie() {
+				addToArrayCookie("test",1,10);
+			}
+			
+			function remCookie() {
+				removeArrayCookie("test");
+			}
+			
+			function readCookie(c_index) {
+				console.log("value at " + c_index + " = " + getArrayCookieSingle("test", c_index));
+			}
+			
+			function createArrayCookie(c_name, c_value, exdays) {
+				var d = new Date();
+				d.setTime(d.getTime() + (exdays*24*60*60*1000));
+				
+				var expires = "expires="+d.toUTCString();
+				document.cookie = c_name + "=" + c_value + "; " + expires;
+			}
+			
+			// we will prepend the new value to the existing values, this way, the newest value is always at the start.
+			function addToArrayCookie(c_name, c_value, exdays) {
+				var cur_vals = getArrayCookieAll(c_name);
+				createArrayCookie(c_name, (c_value + "|" + cur_vals), exdays);
+			}
+			
+			function getArrayCookieAll(c_name) {
+				var name = c_name + "=";
+			    var ca = document.cookie.split(';');
+			    for(var i=0; i<ca.length; i++) {
+			        var c = ca[i];
+			        while (c.charAt(0) == ' ') {
+			            c = c.substring(1);
+					}
+			        if (c.indexOf(name) == 0) {
+			            return c.substring(name.length,c.length);
+					}
+			    }
+			    return "";
+			};
+			
+			function getArrayCookieSingle(c_name, c_index) {
+				var datas = getArrayCookieAll(c_name).split('|');
+				
+				if(datas.length > c_index) {
+					return datas[c_index];
+				}
+				else {
+					console.log("c_index too high for arraycookie with data " + datas);
+				}
+			};
+			
+			function removeArrayCookie(c_name) {
+				createArrayCookie(c_name, "", -1);
+			}
+			
+			
 			//cookie HistorySize = ....;
+			
+			
+			/*
+			 * Idea:
+			 * max_range cookie
+			 * max_msg cookie
+			 * max_date cookie
+			 * history_size cookie
+			 * 
+			 * "make combined" cookie that can store an array of values.
+			 *   Day \ 0 (now) |  1 (yesterday) |  2 (day before yesterday) | etc  
+			 *   msg |         |                |                           |
+			 *  date |         |                |                           |
+			 * range |         |                |                           |
+			 * 
+			 */
 		</script>
 		
-		<title>DUMP1090</title>
+		<script type="text/javascript">
+			//http://192.168.1.20/range.json
+			
+			function loadJSON(){ 	
+				$.getJSON("http://192.168.1.20/dump1090/range.json", function( data ) {
+					var items = [];
+					console.log("data: " + data);
+					$.each( data, function( key, val ) {
+						items.push( "<li id='" + key + "'>" + val + "</li>" );
+					});
+			 
+				$( "<ul/>", {
+					"class": "my-new-list",
+					html: items.join( "" )
+					}).appendTo( "body" );
+				});
+				
+				
+				console.log("tried loading json");
+				
+				console.log("==================");
+				
+				var jqxhr = $.getJSON("range.json", function() {
+				  console.log( "success" );
+				})
+				  .done(function() {
+				    console.log( "second success" );
+				  })
+				  .fail(function( jqxhr, textStatus, error ) {
+                        var err = textStatus + ", " + error;
+                        console.log( "Request Failed: " + err );
+                  })
+				  .always(function() {
+				    console.log( "complete" );
+				  });
+				 
+				// Perform other work here ...
+				 
+				// Set another completion function for the request above
+				jqxhr.complete(function() {
+				  console.log( "second complete" );
+				});
+				
+			}
+		</script>
+		
+		<title>DUMP1090 - Highscores</title>
 	</head>
 	
-	<body onload="loadHistoricalHighscores()">		
+	<body>
+		<div id="buttons">
+			<input type=button value="Create Cookie" onclick="newCookie()">
+			<br>
+			<input type=button value="Add to Cookie" onclick="addCookie()">
+			<br>
+			<input type=button value="Remove Cookie" onclick="remCookie()">
+			<br>
+			<input type=button value="read Cookie[0]" onclick="readCookie(0)">
+			<br>
+			<input type=button value="read Cookie[1]" onclick="readCookie(1)">
+			<br>
+			<input type=button value="read Cookie[2]" onclick="readCookie(2)">
+			<br>
+			<input type=button value="load json" onclick="loadJSON()">
+		</div>
 		<div id="highscores_container">
 			<table id="tableinfo" width="100%">
 				<thead style="background-color: #BBBBBB; cursor: pointer;">

@@ -36,6 +36,8 @@ SiteLat     = 45.0;            // position of the marker
 SiteLon     = 9.0;
 SiteName    = "My Radar Site"; // tooltip of the marker
 
+// Enable or disable auto-selecting of the terrain for default map.
+AutoLoadTerrainMap = true;
 
 // -- Marker settings -------------------------------------
 // The default marker color

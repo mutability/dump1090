@@ -388,19 +388,40 @@ function initialize_map() {
 	// Add our styled map
 	var styledMap = new google.maps.StyledMapType(styles, {name: "Dark Map"});
 	
+	// Line 398: mapTypeId: google.maps.MapTypeId.ROADMAP,
+	
+	var mapOptions;
+	
+	if(AutoLoadTerrainMap){
+		mapOptions = {
+			center: new google.maps.LatLng(CenterLat, CenterLon),
+			zoom: ZoomLvl,
+			mapTypeId: google.maps.MapTypeId.TERRAIN,
+			mapTypeControl: true,
+			streetViewControl: false,
+			mapTypeControlOptions: {
+				mapTypeIds: mapTypeIds,
+				position: google.maps.ControlPosition.TOP_LEFT,
+				style: google.maps.MapTypeControlStyle.DROPDOWN_MENU
+			}
+		};
+	}
+	else{
+		mapOptions = {
+			center: new google.maps.LatLng(CenterLat, CenterLon),
+			zoom: ZoomLvl,
+			mapTypeId: google.maps.MapTypeId.ROADMAP,
+			mapTypeControl: true,
+			streetViewControl: false,
+			mapTypeControlOptions: {
+				mapTypeIds: mapTypeIds,
+				position: google.maps.ControlPosition.TOP_LEFT,
+				style: google.maps.MapTypeControlStyle.DROPDOWN_MENU
+			}
+		};	
+	}
+	
 	// Define the Google Map
-	var mapOptions = {
-		center: new google.maps.LatLng(CenterLat, CenterLon),
-		zoom: ZoomLvl,
-		mapTypeId: google.maps.MapTypeId.ROADMAP,
-		mapTypeControl: true,
-		streetViewControl: false,
-		mapTypeControlOptions: {
-			mapTypeIds: mapTypeIds,
-			position: google.maps.ControlPosition.TOP_LEFT,
-			style: google.maps.MapTypeControlStyle.DROPDOWN_MENU
-		}
-	};
 	
 	GoogleMap = new google.maps.Map(document.getElementById("map_canvas"), mapOptions);
 	
