@@ -10,7 +10,12 @@
 // This controls the units used in the plane table,
 // and whether metric or imperial units are shown first
 // in the detailed plane info.
-Metric = false; // true or false
+// You can enable either Metric or Imperial, or even both.
+// When you select both, you can set your preference with the preferMetric variable.
+PreferMetric = true;
+EnableMetric = true;
+EnableImperial = false;
+
 
 // -- Map settings ----------------------------------------
 // These settings are overridden by any position information
