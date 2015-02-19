@@ -5,12 +5,23 @@
 //
 // --------------------------------------------------------
 
-// -- Output Settings -------------------------------------
-// Show metric values
-// This controls the units used in the plane table,
-// and whether metric or imperial units are shown first
-// in the detailed plane info.
-Metric = false; // true or false
+// -- Formatting Settings ---------------------------------
+// Enable or disable Metric and`/or Imperial formatting
+// Controls the units shown on the map and in the table
+// The PreferMetric is used to determine which value to
+// show in the compact mode when both Imperial and Metric
+// are enabled.
+PreferMetric = true;
+EnableMetric = true;
+EnableImperial = false;
+
+// -- Highscore Settings ----------------------------------
+// Enable or disable highscore storage through cookies
+SaveHighscores = true;
+// how many days must the cookies last
+SaveLastsForDays = 365
+// how many previous cookies to keep?
+SaveLastNumDays = 31;
 
 // -- Map settings ----------------------------------------
 // These settings are overridden by any position information
@@ -28,6 +39,8 @@ SiteLat     = 45.0;            // position of the marker
 SiteLon     = 9.0;
 SiteName    = "My Radar Site"; // tooltip of the marker
 
+// Enable or disable auto-selecting of the terrain for default map.
+AutoLoadTerrainMap = true;
 
 // -- Marker settings -------------------------------------
 // The default marker color
@@ -38,7 +51,7 @@ StaleColor = "rgb(190, 190, 190)";
 
 SiteCircles = true; // true to show circles (only shown if the center marker is shown)
 // In nautical miles or km (depending settings value 'Metric')
-SiteCirclesDistances = new Array(100,150,200);
+SiteCirclesDistances = new Array(50,100,150,200);
 
 // Show the clocks at the top of the righthand pane? You can disable the clocks if you want here
 ShowClocks = true;
