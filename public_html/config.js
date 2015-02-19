@@ -17,6 +17,9 @@ Metric = false; // true or false
 // provided by dump1090 itself. All positions are in decimal
 // degrees.
 
+// Enable auto terrain loading
+AutoLoadTerrain = true;
+
 // Default center of the map.
 DefaultCenterLat = 45.0;
 DefaultCenterLon = 9.0;
