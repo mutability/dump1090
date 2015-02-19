@@ -503,6 +503,118 @@ function reaper() {
         PlanesOrdered = newPlanes;
         refreshTableInfo();
         refreshSelected();
+} 
+
+//
+// formatting helpers
+//
+
+var TrackDirections = ["North","Northeast","East","Southeast","South","Southwest","West","Northwest"];
+
+// track in degrees (0..359)
+function format_track_brief(track) {
+        if (track === null) return "";
+        return Math.round(track);
+}
+
+// track in degrees (0..359)
+function format_track_long(track) {
+        if (track === null) return "n/a";
+        var trackDir = Math.floor((360 + track % 360 + 22.5) / 45) % 8;
+        return Math.round(track) + DEGREES + NBSP + "(" + TrackDirections[trackDir] + ")";
+}
+
+// alt in ft
+function format_altitude_brief(alt, vr) {
+        var alt_text;
+
+        if (alt === null)
+                return "";
+        if (alt === "ground")
+                return "ground";
+
+        if (Metric)
+                alt_text = Math.round(alt / 3.2828) + NBSP;
+        else
+                alt_text = Math.round(alt) + NBSP;
+
+        if (vr > 128)
+                return alt_text + UP_TRIANGLE;
+        else if (vr < -128)
+                return alt_text + DOWN_TRIANGLE;
+        else
+                return alt_text + NBSP;
+}
+
+// alt in ft
+function format_altitude_long(alt, vr) {
+        var alt_text;
+
+        if (alt === null)
+                return "n/a";
+        if (alt === "ground")
+                return "on ground";
+        
+        if (Metric)
+                alt_text = Math.round(alt / 3.2828) + NBSP + "m / " + Math.round(alt) + NBSP + "ft";
+        else
+                alt_text = Math.round(alt) + NBSP + "ft / " + Math.round(alt / 3.2828) + NBSP + "m";
+
+        if (vr > 128)
+                return UP_TRIANGLE + NBSP + alt_text;
+        else if (vr < -128)
+                return DOWN_TRIANGLE + NBSP + alt_text;
+        else
+                return alt_text;
+}
+
+// speed in kts
+function format_speed_brief(speed) {
+        if (speed === null)
+                return "";
+
+        if (Metric)
+    		return Math.round(speed * 1.852);
+        else
+                return Math.round(speed);
+}
+
+// speed in kts
+function format_speed_long(speed) {
+        if (speed === null)
+                return "n/a";
+
+        if (Metric)
+    		return Math.round(speed * 1.852) + NBSP + "km/h / " + Math.round(speed) + NBSP + "kt";
+        else
+                return Math.round(speed) + NBSP + "kt / " + Math.round(speed * 1.852) + NBSP + "km/h";
+}
+
+// dist in metres
+function format_distance_brief(dist) {
+        if (dist === null)
+                return "";
+
+        if (Metric)
+                return (dist/1000).toFixed(1);
+        else
+                return (dist/1852).toFixed(1);
+}
+
+// dist in metres
+function format_distance_long(dist) {
+        if (dist === null)
+                return "n/a";
+
+        if (Metric)
+                return (dist/1000).toFixed(1) + " km / " + (dist/1852).toFixed(1) + " NM";
+        else
+                return (dist/1852).toFixed(1) + " NM / " + (dist/1000).toFixed(1) + " km";
+}
+
+// p as a LatLng
+function format_latlng(p) {
+        return p.lat().toFixed(3) + DEGREES + "," + NBSP + p.lng().toFixed(3) + DEGREES;
 }
 
 // Refresh the detail window about the plane
@@ -803,7 +915,7 @@ function drawCircle(marker, distance) {
     }
     
     distance *= 1000.0;
-    if (!EnableMetric) {
+    if (!Metric) {
         distance *= 1.852;
     }
     
