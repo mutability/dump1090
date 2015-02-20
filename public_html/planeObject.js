@@ -195,7 +195,27 @@ PlaneObject.prototype.updateIcon = function() {
 	// If we have not seen a recent position update, change color
 	if (this.seen_pos > 15)
 		col = StaleColor;
-	
+
+        // color plane with altitude 
+
+        if (this.altitude >= 0 && this.altitude < 2000) 
+                col = "rgb(255,0,0)";
+                
+        if (this.altitude >= 2000 && this.altitude < 5000) 
+                col = "rgb(200,0,0)";
+                        
+        if (this.altitude >= 5000 && this.altitude < 10000) 
+                col = "rgb(100,0,0)";
+                        
+        if (this.altitude >= 10000 && this.altitude < 20000) 
+                col = "rgb(0,150,0)";
+                        
+        if (this.altitude >= 20000 && this.altitude < 30000) 
+                col = "rgb(0,255,0)";
+                        
+        if (this.altitude >= 30000 && this.altitude < 50000) 
+                col = "rgb(0,0,255)";    
+
 	// If the squawk code is one of the international emergency codes,
 	// match the info window alert color.
         if (this.squawk in SpecialSquawks)
