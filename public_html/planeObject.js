@@ -289,6 +289,9 @@ PlaneObject.prototype.updateData = function(receiver_timestamp, data) {
 
                 if (SitePosition !== null) {
                         this.sitedist = google.maps.geometry.spherical.computeDistanceBetween (SitePosition, this.position);
+			if(parseFloat(this.sitedist)>parseFloat(maxDistance)){
+				maxDistance = parseFloat(this.sitedist);
+			}                        
                 }
         }
         if (typeof data.flight !== "undefined")
