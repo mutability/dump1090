@@ -36,7 +36,7 @@ var FetchPending = null;
 
 var MessageCountHistory = [];
 var MessageRate = 0;
-
+var maxDistance = 0;
 var NBSP='\u00a0';
 
 function processReceiverUpdate(data) {
@@ -537,7 +537,7 @@ function refreshSelected() {
                 } else {
                         $('#dump1090_message_rate').text("n/a");
                 }
-
+			$('#max_sitedist').text(parseInt(maxDistance/1000));
                 return;
         }
         
