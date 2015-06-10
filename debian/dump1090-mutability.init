@@ -63,8 +63,13 @@ if [ "x$OVERSAMPLE" = "xyes" ]; then ARGS="$ARGS --oversample"; fi
 if [ "x$FIX_CRC" = "xyes" ]; then ARGS="$ARGS --fix"; fi
 if [ "x$PHASE_ENHANCE" = "xyes" ]; then ARGS="$ARGS --phase-enhance"; fi
 if [ "x$AGGRESSIVE" = "xyes" ]; then ARGS="$ARGS --aggressive"; fi
-if [ -n "$LAT" ]; then ARGS="$ARGS --lat $LAT"; fi
-if [ -n "$LON" ]; then ARGS="$ARGS --lon $LON"; fi
+LATLONFILE=/var/lib/dump1090/latlon
+if [ -e $LATLONFILE ]; then
+	LATVAL=$(sed -n '1p' < $LATLONFILE)
+	LONVAL=$(sed -n '2p' < $LATLONFILE)
+fi
+if [ -n "$LAT" ]; then ARGS="$ARGS --lat $LAT"; elif [ -n $LATVAL ]; then ARGS="$ARGS --lat $LATVAL"; fi
+if [ -n "$LON" ]; then ARGS="$ARGS --lon $LON"; elif [ -n $LONVAL ]; then ARGS="$ARGS --lon $LONVAL"; fi
 ARGS="$ARGS --max-range $MAX_RANGE"; fi
 
 # net:
