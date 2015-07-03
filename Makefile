@@ -20,7 +20,7 @@ LIBS=-lpthread -lm -lrt
 LIBS_RTL=`pkg-config --libs librtlsdr`
 CC=gcc
 
-all: dump1090 view1090
+all: dump1090 view1090 faup1090
 
 %.o: %.c *.h
 	$(CC) $(CPPFLAGS) $(CFLAGS) $(EXTRACFLAGS) -c $< -o $@
