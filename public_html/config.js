@@ -39,6 +39,11 @@ SiteLat     = 45.0;            // position of the marker
 SiteLon     = 9.0;
 SiteName    = "My Radar Site"; // tooltip of the marker
 
+//User Map (KML File)
+//Enables KML overlay on map, UserMap must have a value below when "true"
+UserMapShow = false;            //true to show KML
+//KML to show: 
+UserMap     = "";               //Fully qualified local path or URL
 
 // -- Marker settings -------------------------------------
 
