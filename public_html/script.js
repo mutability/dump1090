@@ -7,6 +7,7 @@ var Planes        = {};
 var PlanesOrdered = [];
 var SelectedPlane = null;
 var FollowSelected = false;
+var UserKML	  = null;
 
 var SpecialSquawks = {
         '7500' : { cssClass: 'squawk7500', markerColor: 'rgb(255, 85, 85)', text: 'Aircraft Hijacking' },
@@ -457,6 +458,15 @@ function initialize_map() {
               drawCircle(marker, SiteCirclesDistances[i]); // in meters
             }
         }
+	}
+	
+	//Add User Map layer if requested
+	if (UserMapShow) {
+	    UserKML = new google.maps.KmlLayer({
+		url: UserMap,
+		map: GoogleMap,
+		preserveViewport: true
+	    	});
 	}
 }
 
