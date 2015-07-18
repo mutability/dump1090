@@ -39,6 +39,9 @@ SiteLat     = 45.0;            // position of the marker
 SiteLon     = 9.0;
 SiteName    = "My Radar Site"; // tooltip of the marker
 
+// Controls Map Overlays
+showNEXRAD = false;
+showGOESEastVis = false;
 
 // -- Marker settings -------------------------------------
 
