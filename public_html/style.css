@@ -5,7 +5,15 @@ html, body {
 div#map_container     { float: left; width: 100%; height: 100%; }
 div#map_canvas        { height: 100%; margin-right: 420px; }
 
-div#sidebar_container { float: left; width: 410px; margin-left: -410px; height: 100%; overflow: auto; }
+div#sidebar_container { float: left; width: 400px; margin-left: -400px; height: 100%; overflow: auto; }
+
+div#grippie { border: 1px solid #ddd; border-width: 0 1px 1px; cursor: e-resize; width: 9px;
+			  overflow: hidden; background-color: #eee; background-image: url('grippie.png');
+			  background-repeat: no-repeat; background-position: 50% 50%;
+			  float: left; margin-left: -420px; height: 100%; }
+
+div#grippie.fullscreen { float: right; cursor: w-resize; }
+div#map_canvas.fullscreen { margin-right: 11px; }
 
 div#SpecialSquawkWarning { position: absolute; bottom: 25px; right: 430px; border: 2px solid red;
     background-color: #FFFFA3; opacity: 0.75; filter:alpha(opacity=75); padding: 5px;

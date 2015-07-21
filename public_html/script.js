@@ -836,3 +836,15 @@ function drawCircle(marker, distance) {
     });
     circle.bindTo('center', marker, 'position');
 }
+
+// Bind grippie actions
+$(function() {
+	var handleClick = function(e) {
+		e.preventDefault();
+		$("#sidebar_container").toggle();
+		$("#map_canvas, #grippie").toggleClass("fullscreen");
+		google.maps.event.trigger(GoogleMap, "resize");		
+	};
+	
+	$("#grippie").click(handleClick);
+});
