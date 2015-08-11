@@ -78,8 +78,13 @@ void display_stats(struct stats *st) {
 
     if (!Modes.net_only) {
         printf("Local receiver:\n");
+#ifndef _WIN32
         printf("  %llu samples processed\n",                        (unsigned long long)st->samples_processed);
         printf("  %llu samples dropped\n",                          (unsigned long long)st->samples_dropped);
+#else
+        printf("  %I64u samples processed\n",                        (unsigned long long)st->samples_processed);
+        printf("  %I64u samples dropped\n",                          (unsigned long long)st->samples_dropped);
+#endif
 
         printf("  %u Mode A/C messages received\n",                 st->demod_modeac);
         printf("  %u Mode-S message preambles received\n",          st->demod_preambles);
@@ -164,9 +169,15 @@ void display_stats(struct stats *st) {
         uint64_t background_cpu_millis = (uint64_t)st->background_cpu.tv_sec*1000UL + st->background_cpu.tv_nsec/1000000UL;
 
         printf("CPU load: %.1f%%\n"
+#ifndef _WIN32
                "  %llu ms for demodulation\n"
                "  %llu ms for reading from USB\n"
                "  %llu ms for network input and background tasks\n",
+#else
+               "  %I64u ms for demodulation\n"
+               "  %I64u ms for reading from USB\n"
+               "  %I64u ms for network input and background tasks\n",
+#endif
                100.0 * (demod_cpu_millis + reader_cpu_millis + background_cpu_millis) / (st->end - st->start + 1),
                (unsigned long long) demod_cpu_millis,
                (unsigned long long) reader_cpu_millis,
