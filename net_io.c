@@ -196,7 +196,13 @@ struct net_service *makeFatsvOutputService(void)
 void modesInitNet(void) {
     struct net_service *s;
 
+#ifndef _WIN32
     signal(SIGPIPE, SIG_IGN);
+#else
+    if ((!Modes.wsaData.wVersion) && (!Modes.wsaData.wHighVersion))
+        if (WSAStartup(MAKEWORD(2, 1), &Modes.wsaData) != 0)
+            fprintf(stderr, "WSAStartup returned Error\n");
+#endif
     Modes.clients = NULL;
     Modes.services = NULL;
 
