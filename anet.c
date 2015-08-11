@@ -45,7 +45,7 @@
   #include <stdio.h>
 #else
   #include "winstubs.h" //Put everything Windows specific in here
-  #include "dump1090.h"
+  #include <stdint.h>
 #endif
 
 #include "anet.h"
