@@ -631,9 +631,8 @@ void *readerThreadEntryPoint(void *arg) {
     pthread_cond_signal(&Modes.data_cond);
     pthread_mutex_unlock(&Modes.data_mutex);
 
-#ifndef _WIN32
     pthread_exit(NULL);
-#else
+#ifdef _WIN32
     return NULL;
 #endif
 }
