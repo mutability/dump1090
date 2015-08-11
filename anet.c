@@ -62,8 +62,8 @@ static void anetSetError(char *err, const char *fmt, ...)
 
 int anetNonBlock(char *err, int fd)
 {
-    int flags;
 #ifndef _WIN32
+    int flags;
     /* Set the socket nonblocking.
      * Note that fcntl(2) for F_GETFL and F_SETFL can't be
      * interrupted by a signal. */
@@ -76,7 +76,7 @@ int anetNonBlock(char *err, int fd)
         return ANET_ERR;
     }
 #else
-    flags = 1;
+    u_long flags = 1;
     if (ioctlsocket(fd, FIONBIO, &flags)) {
         errno = WSAGetLastError();
         anetSetError(err, "ioctlsocket(FIONBIO): %s", strerror(errno));
