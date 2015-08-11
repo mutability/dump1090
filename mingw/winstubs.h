@@ -12,7 +12,6 @@
 #include <math.h>
 #include <fcntl.h>
 
-#define sleep Sleep
 #define realpath(N,R) _fullpath((R),(N),_MAX_PATH)
 #define M_PI 3.14159265358979323846
 
@@ -25,7 +24,8 @@
 
 
 _inline void fchmod(int A, int B) {(void)A; (void)B;}
-_inline void usleep(UINT32 ulSleep) {Sleep(ulSleep/1000);}
+_inline void usleep(DWORD uSecSleep) {Sleep(uSecSleep/1000);}
+_inline void sleep(DWORD secSleep) {Sleep(secSleep*1000);}
 _inline int inet_aton(const char * cp, DWORD * ulAddr)
 {
     *ulAddr = inet_addr(cp);
