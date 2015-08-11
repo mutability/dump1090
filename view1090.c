@@ -202,12 +202,6 @@ int main(int argc, char **argv) {
         }
     }
 
-#ifdef _WIN32
-    // Try to comply with the Copyright license conditions for binary distribution
-    if (!Modes.quiet) {showCopyright();}
-#define MSG_DONTWAIT 0
-#endif
-
 #ifndef _WIN32
     // Setup for SIGWINCH for handling lines
     if (Modes.interactive) {signal(SIGWINCH, sigWinchCallback);}
