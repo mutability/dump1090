@@ -1227,9 +1227,8 @@ int main(int argc, char **argv) {
     cleanup_converter(Modes.converter_state);
     log_with_timestamp("Normal exit.");
 
-#ifndef _WIN32
     pthread_exit(0);
-#else
+#ifdef _WIN32
     return (0);
 #endif
 }
