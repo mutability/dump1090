@@ -43,7 +43,7 @@ SiteName    = "My Radar Site"; // tooltip of the marker
 //Enables KML overlay on map, UserMap must have a value below when "true"
 UserMapShow = false;            //true to show KML
 //KML to show: 
-UserMap     = "";               //Fully qualified local path or URL
+UserMap     = "";               //URL (publicly available domain)
 
 // -- Marker settings -------------------------------------
 
