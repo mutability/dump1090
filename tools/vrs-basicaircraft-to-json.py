@@ -30,7 +30,7 @@ def extract(dbfile, todir, blocklimit, debug):
     				if owner: blocks[bkey][dkey]['o'] = owner
     				if type: blocks[bkey][dkey]['s'] = type
     				ac_count += 1
-    else:
+        else:
 		with closing(sqlite3.connect(dbfile)) as db:
 			with closing(db.execute('SELECT a.Icao, a.Registration, m.Icao, o.Name  FROM Aircraft a, Model m, Operator o WHERE a.ModelID = m.ModelID and a.operatorID = o.operatorID')) as c:
 				for icao24, reg, icaotype, type  in c:
