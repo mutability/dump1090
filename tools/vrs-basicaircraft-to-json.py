@@ -32,13 +32,14 @@ def extract(dbfile, todir, blocklimit, debug):
     				ac_count += 1
         else:
 		with closing(sqlite3.connect(dbfile)) as db:
-			with closing(db.execute('SELECT a.Icao, a.Registration, m.Icao, o.Name  FROM Aircraft a, Model m, Operator o WHERE a.ModelID = m.ModelID and a.operatorID = o.operatorID')) as c:
-				for icao24, reg, icaotype, type  in c:
+			with closing(db.execute('SELECT a.Icao, a.Registration, m.Icao, m.Name, o.Name FROM Aircraft a, Model m, Operator o WHERE a.ModelID = m.ModelID and a.operatorID = o.operatorID')) as c:
+				for icao24, reg, icaotype, type, owner in c:
 					bkey = icao24[0:1].upper()
 					dkey = icao24[1:].upper()
 					blocks[bkey][dkey] = {}
 					if reg: blocks[bkey][dkey]['r'] = reg
 					if icaotype: blocks[bkey][dkey]['t'] = icaotype
+					if owner: blocks[bkey][dkey]['o'] = owner
 					if type: blocks[bkey][dkey]['s'] = type
 					ac_count += 1
     print >>sys.stderr, 'Read', ac_count, 'aircraft'
