@@ -17,15 +17,30 @@ def extract(dbfile, todir, blocklimit, debug):
         blocks['%01X' % i] = {}
 
     print >>sys.stderr, 'Reading', dbfile
-    with closing(sqlite3.connect(dbfile)) as db:
-        with closing(db.execute('SELECT a.Icao, a.Registration, m.Icao FROM Aircraft a, Model m WHERE a.ModelID = m.ModelID')) as c:
-            for icao24, reg, icaotype in c:
-                bkey = icao24[0:1].upper()
-                dkey = icao24[1:].upper()
-                blocks[bkey][dkey] = {}
-                if reg: blocks[bkey][dkey]['r'] = reg
-                if icaotype: blocks[bkey][dkey]['t'] = icaotype
-                ac_count += 1
+        if "BaseStation.sqb" in dbfile:
+        with closing(sqlite3.connect(dbfile)) as db:
+            with closing(db.execute('SELECT ModeS, Registration, ICAOTypeCode, Manufacturer, RegisteredOwners, Type FROM Aircraft')) as c:
+                for icao24, reg, icaotype, manu, owner, type  in c:
+    				bkey = icao24[0:1].upper()
+    				dkey = icao24[1:].upper()
+    				blocks[bkey][dkey] = {}
+    				if reg: blocks[bkey][dkey]['r'] = reg
+    				if icaotype: blocks[bkey][dkey]['t'] = icaotype
+    				if manu: blocks[bkey][dkey]['m'] = manu
+    				if owner: blocks[bkey][dkey]['o'] = owner
+    				if type: blocks[bkey][dkey]['s'] = type
+    				ac_count += 1
+    else:
+		with closing(sqlite3.connect(dbfile)) as db:
+			with closing(db.execute('SELECT a.Icao, a.Registration, m.Icao, o.Name  FROM Aircraft a, Model m, Operator o WHERE a.ModelID = m.ModelID and a.operatorID = o.operatorID')) as c:
+				for icao24, reg, icaotype, type  in c:
+					bkey = icao24[0:1].upper()
+					dkey = icao24[1:].upper()
+					blocks[bkey][dkey] = {}
+					if reg: blocks[bkey][dkey]['r'] = reg
+					if icaotype: blocks[bkey][dkey]['t'] = icaotype
+					if type: blocks[bkey][dkey]['s'] = type
+					ac_count += 1
     print >>sys.stderr, 'Read', ac_count, 'aircraft'
 
     print >>sys.stderr, 'Writing blocks:',
