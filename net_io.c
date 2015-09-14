@@ -1315,15 +1315,15 @@ static int handleHTTPRequest(struct client *c, char *p) {
         char getFile[1024];
 
         if (strlen(url) < 2) {
-            snprintf(getFile, sizeof getFile, "%s/gmap.html", HTMLPATH); // Default file
+            snprintf(getFile, sizeof getFile, "%s/gmap.html", Modes.html_dir); // Default file
         } else {
-            snprintf(getFile, sizeof getFile, "%s/%s", HTMLPATH, url);
+            snprintf(getFile, sizeof getFile, "%s/%s", Modes.html_dir, url);
         }
 
         if (!realpath(getFile, rp))
             rp[0] = 0;
-        if (!realpath(HTMLPATH, hrp))
-            strcpy(hrp, HTMLPATH);
+        if (!realpath(Modes.html_dir, hrp))
+            strcpy(hrp, Modes.html_dir);
 
         clen = -1;
         content = strdup("Server error occured");
@@ -1342,7 +1342,7 @@ static int handleHTTPRequest(struct client *c, char *p) {
 
         if (clen < 0) {
             content = realloc(content, 128);
-            clen = snprintf(content, 128,"Error opening HTML file: %s", strerror(errno));
+            clen = snprintf(content, 128, "Error opening HTML file: %s", strerror(errno));
             statuscode = 404;
             statusmsg = "Not Found";
         }
