@@ -434,6 +434,33 @@ function initialize_map() {
 
 	GoogleMap.mapTypes.set("dark_map", styledMap);
 	
+	if (showNEXRAD) { //weather overlay: radar
+		var tileNEX = new google.maps.ImageMapType({
+			getTileUrl: function(tile, zoom) {
+				return "http://mesonet.agron.iastate.edu/cache/tile.py/1.0.0/nexrad-n0q-900913/" + zoom + "/" + tile.x + "/" + tile.y +".png?"+ (new Date()).getTime(); 
+			},
+			tileSize: new google.maps.Size(256, 256),
+			opacity:0.20,
+			name : 'NEXRAD',
+			isPng: true
+		});
+		GoogleMap.overlayMapTypes.push(null); // create empty overlay entry
+		GoogleMap.overlayMapTypes.setAt("1",tileNEX);
+	}
+	if (showGOESEastVis) { //weather overlay: visual
+		var goes = new google.maps.ImageMapType({
+			getTileUrl: function(tile, zoom) {
+				return "http://mesonet.agron.iastate.edu/cache/tile.py/1.0.0/goes-east-vis-1km-900913/" + zoom + "/" + tile.x + "/" + tile.y +".png?"+ (new Date()).getTime(); 
+			},
+			tileSize: new google.maps.Size(256, 256),
+			opacity:0.60,
+			name : 'GOES East Vis',
+			isPng: true
+		});	
+		GoogleMap.overlayMapTypes.push(null); // create empty overlay entry
+		GoogleMap.overlayMapTypes.setAt("0",goes);
+	}
+	
 	// Listeners for newly created Map
         google.maps.event.addListener(GoogleMap, 'center_changed', function() {
                 localStorage['CenterLat'] = GoogleMap.getCenter().lat();
