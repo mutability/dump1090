@@ -3,10 +3,11 @@
 # data and are periodically written by the dump1090 daemon.
 #
 server{
-        rewrite ^/dump1090/$ /dump1090/gmap.html permanent;
-        rewrite ^/dump1090$ /dump1090/gmap.html permanent;
-
-        location /dump1090/ {
+        listen 80;
+        
+        index gmap.html;
+        
+        location /dump1090 {
            alias /usr/share/dump1090-mutability/html/;
         }
         location /dump1090/data/ {
