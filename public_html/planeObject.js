@@ -406,8 +406,8 @@ PlaneObject.prototype.updateLines = function() {
                                 var lineSymbol = {
                                         path: 'M 0,-1 0,1',
                                         strokeOpacity : 1,
-                                        strokeColor : '#804040',
-                                        strokeWeight : 2,
+                                        strokeColor : '#F1C40F',
+                                        strokeWeight : 3,
                                         scale: 2
                                 };
                                 
@@ -423,8 +423,8 @@ PlaneObject.prototype.updateLines = function() {
                                 seg.line = new google.maps.Polyline({
                                         path: seg.track,
 					strokeOpacity: 1.0,
-					strokeColor: (seg.ground ? '#408040' : '#000000'),
-					strokeWeight: 3,
+					strokeColor: (seg.ground ? '#408040' : '#BDC3C7'),
+					strokeWeight: 4,
 					map: GoogleMap });
                         }
                 }
