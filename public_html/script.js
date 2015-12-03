@@ -183,7 +183,9 @@ function initialize() {
     $(document).ready(function() {
         // timestamp for dummy data
         var date = new Date();
-        var timestamp = date.getHours() + ':' + date.getMinutes() + ':' + (date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds());
+        var timestamp = (date.getHours() < 10 ? '0' + date.getHours() : date.getHours()) + ':' 
+            + (date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes()) + ':'
+            + (date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds());
         
         var messagesData = {
             labels: [timestamp],
@@ -642,7 +644,10 @@ function refreshSelected() {
         var message_count_delta = MessageCountHistory[MessageCountHistory.length - 1].messages - MessageCountHistory[0].messages;
         if (message_time_delta > 0) {
             var date = new Date();
-            var timestamp = date.getHours() + ':' + date.getMinutes() + ':' + (date.getSeconds() == 0 ? '00' : date.getSeconds());
+            var timestamp = (date.getHours() < 10 ? '0' + date.getHours() : date.getHours()) + ':' 
+                + (date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes()) + ':'
+                + (date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds());
+
             MessageRate = message_count_delta / message_time_delta;
             // populate with first three seconds of data and every ten seconds thereafter
             if (date.getSeconds() % 10 == 0 || MessageRateChart.datasets[0].points.length < 3) {
