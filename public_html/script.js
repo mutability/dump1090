@@ -48,6 +48,9 @@ var FetchPending = null;
 
 var MessageCountHistory = [];
 var MessageRate = 0;
+var MessageRateChart;
+var PlanesRateChart;
+var DummyDataRemoved = false;
 
 var NBSP = '\u00a0';
 
@@ -177,6 +180,53 @@ function initialize() {
 
     $("#loader").removeClass("hidden");
 
+    $(document).ready(function() {
+        // timestamp for dummy data
+        var date = new Date();
+        var timestamp = date.getHours() + ':' + date.getMinutes() + ':' + (date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds());
+        
+        var messagesData = {
+            labels: [timestamp],
+            datasets: [{
+                label: "Messages per second",
+                fillColor: "rgba(220,220,220,0.2)",
+                strokeColor: "rgba(220,220,220,1)",
+                pointColor: "rgba(220,220,220,1)",
+                // add dummy data so charts display on load
+                data: [200]
+            }]
+        };
+
+        var planesData = {
+            labels: [timestamp],
+            datasets: [{
+                label: "Aircraft",
+                fillColor: "rgba(44, 62, 80, 0.2)",
+                strokeColor: "rgba(65, 131, 215, 1)",
+                pointColor: "rgba(44, 62, 80, 1)",
+                // add dummy data so charts display on load
+                data: [100]
+            }, {
+                label: "Aircraft with location",
+                fillColor: "rgba(245, 215, 110, 0.2)",
+                strokeColor: "rgba(244, 208, 63, 1)",
+                pointColor: "rgba(244, 208, 63, 1)",
+                // add dummy data so charts display on load
+                data: [0]
+            }]
+        }
+
+        var messageCtx = document.getElementById("messages-chart").getContext("2d");
+        MessageRateChart = new Chart(messageCtx).Line(messagesData, {
+            pointDot : false,
+        });
+
+        var planeCtx = document.getElementById("planes-chart").getContext("2d");
+        PlanesRateChart = new Chart(planeCtx).Line(planesData, {
+            pointDot : false,
+        });
+    });
+
     // Get receiver metadata, reconfigure using it, then continue
     // with initialization
     $.ajax({
@@ -229,7 +279,7 @@ function load_history_item(i) {
 
     var bar = $("#progress-bar");
     bar.attr('aria-valuenow', i + 1);
-    bar.css('width', (bar.attr('aria-valuenow') / bar.attr('aria-valuemax') * 100) + '%' ); 
+    bar.css('width', (bar.attr('aria-valuenow') / bar.attr('aria-valuemax') * 110) + '%');
 
     $.ajax({
         url: 'data/history_' + i + '.json',
@@ -590,8 +640,25 @@ function refreshSelected() {
     if (MessageCountHistory.length > 1) {
         var message_time_delta = MessageCountHistory[MessageCountHistory.length - 1].time - MessageCountHistory[0].time;
         var message_count_delta = MessageCountHistory[MessageCountHistory.length - 1].messages - MessageCountHistory[0].messages;
-        if (message_time_delta > 0)
+        if (message_time_delta > 0) {
+            var date = new Date();
+            var timestamp = date.getHours() + ':' + date.getMinutes() + ':' + (date.getSeconds() == 0 ? '00' : date.getSeconds());
             MessageRate = message_count_delta / message_time_delta;
+            // populate with first three seconds of data and every ten seconds thereafter
+            if (date.getSeconds() % 10 == 0 || MessageRateChart.datasets[0].points.length < 3) {
+                if (MessageRateChart.datasets[0].points.length > 60)
+                    MessageRateChart.removeData();
+                if (PlanesRateChart.datasets[0].points.length > 60)
+                    PlanesRateChart.removeData();
+                if (!DummyDataRemoved) {
+                    MessageRateChart.removeData();
+                    PlanesRateChart.removeData();
+                    DummyDataRemoved = true;
+                }
+                MessageRateChart.addData([MessageRate.toFixed(2)], timestamp);
+                PlanesRateChart.addData([TrackedAircraft, TrackedAircraftPositions], timestamp);
+            }
+        }
     } else {
         MessageRate = null;
     }

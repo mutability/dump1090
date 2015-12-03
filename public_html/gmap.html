@@ -8,6 +8,7 @@
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
     <script src="https://maps.googleapis.com/maps/api/js?libraries=geometry"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.min.js"></script>
     <script src="config.js"></script>
     <script src="markers.js"></script>
     <script src="dbloader.js"></script>
@@ -63,17 +64,18 @@
                                     <span class="infoblock_body dim"> (no aircraft selected)</span>
                                 </div>
                                 <div class="panel-body">
-                                    <table class="table table-condensed">
-                                        <tr class="infoblock_heading">
-                                            <tr class="infoblock_body">
-                                                <td>Aircraft (total): <span id="dump1090_total_ac">n/a</span></td>
-                                                <td>Messages: <span id="dump1090_message_rate">n/a</span>/sec</td>
-                                            </tr>
-                                            <tr class="infoblock_body">
-                                                <td>(with positions): <span id="dump1090_total_ac_positions">n/a</span></td>
-                                                <td>History: <span id="dump1090_total_history">n/a</span> positions</td>
-                                            </tr>
-                                    </table>
+                                    <canvas id="planes-chart" class="hidden-sm hidden-xs"></canvas>
+                                    <div class="text-center" style="width: 100%">
+                                        <span>Aircraft (total): </span><span id="dump1090_total_ac">n/a</span>
+                                        <br>
+                                        <span>Aircraft (position): </span><span id="dump1090_total_ac_positions">n/a</span>
+                                    </div>
+                                    <canvas id="messages-chart" class="hidden-sm hidden-xs"></canvas>
+                                    <div class="text-center" style="width: 100%">
+                                        <span id="dump1090_message_rate">n/a</span><span> messages per second </span>
+                                        <br>
+                                        <span>History: </span><span id="dump1090_total_history">n/a</span><span> positions</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
