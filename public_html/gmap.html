@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html>
 	<head>
 		<meta charset="utf-8"/>
@@ -37,33 +38,29 @@
             <input type="hidden" name="submit" value="submit">
           </form>
 
-		<div id="map_container">
-			<div id="map_canvas"></div>
-		</div>
-		<div id="sidebar_container">
-			<div id="sidebar_canvas">
-				<div id="timestamps" style="align: center">
-					<table width="100%">
-                                          <tr>
-					    <td align="center"> <canvas id="utcclock"></canvas> </td>
-					    <td align="center"> <canvas id="receiverclock"></canvas> </td>
-					  </tr>
-
-                                          <tr>
-					    <td align="center">UTC</td>
-					    <td align="center">Last Update</td>
-					  </tr>
-                                        </table>
-				</div>
-				<div id="sudo_buttons">
-					<table width="100%">
-                                          <tr>
-					    <td width="150" style="text-align: center;" class="pointer">
-					      [ <span onclick="resetMap();">Reset Map</span> ]
-					    </td>
-					  </tr>
-                                        </table>
-				</div>
+          <div id="map_canvas"></div>
+          <div id="sidebar_canvas">
+            <div id="timestamps" style="overflow: hidden;">
+              <table width="100%">
+                <tr>
+                  <td align="center"> <canvas id="utcclock"></canvas> </td>
+                  <td align="center"> <canvas id="receiverclock"></canvas> </td>
+                </tr>
+                <tr>
+                  <td align="center">UTC</td>
+                  <td align="center">Last Update</td>
+                </tr>
+              </table>
+            </div>
+            <div id="sudo_buttons">
+              <table width="100%">
+                <tr>
+                  <td width="150" style="text-align: center;" class="pointer">
+                    [ <span onclick="resetMap();">Reset Map</span> ]
+                  </td>
+                </tr>
+              </table>
+            </div>
 
 				<div id="dump1090_infoblock">
                                   <table width="100%">
@@ -162,7 +159,7 @@
 	                          <table id="tableinfo" width="100%">
 	                            <thead style="background-color: #BBBBBB; cursor: pointer;">
 	                              <td id="icao" onclick="sortByICAO();">ICAO</td>
-                                      <td id="flag" onclick="sortByCountry()"><!-- column for flag image --></td>
+                                      <td id="flag" onclick="sortByCountry()" width="20"><!-- column for flag image --></td>
 				      <td id="flight" onclick="sortByFlight();">Flight</td>
 	                              <td id="squawk" onclick="sortBySquawk();" align="right">Squawk</td>
                                       <td id="altitude" onclick="sortByAltitude();" align="right">Altitude</td>
@@ -201,7 +198,5 @@
                   <span id="update_error_detail"></span><br>
                   The displayed map data will be out of date.
                 </div>
-
-		<div id="container_splitter"></div>
 	</body>
 </html>

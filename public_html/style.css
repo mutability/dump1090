@@ -2,10 +2,13 @@ html, body {
     margin: 0; padding: 0; background-color: #ffffff; font-family: Tahoma, Sans-Serif;
     font-size: 10pt; overflow: auto; height: 100%;
 }
-div#map_container     { float: left; width: 100%; height: 100%; }
-div#map_canvas        { height: 100%; margin-right: 420px; }
+div#map_canvas        { width: 100%; height: 100%; }
 
-div#sidebar_container { float: left; width: 410px; margin-left: -410px; height: 100%; overflow: auto; }
+div#sidebar_canvas { position: absolute; top: 0px; right: 0px; width: 410px; max-height: 100%;
+    background: #FFFFFF; border-bottom-left-radius: 3px; z-index: 99; overflow: auto; }
+div#sidebar_canvas table { border-collapse: collapse; }
+
+div#dump1090_infoblock { padding: 0 2px 0 2px; }
 
 div#SpecialSquawkWarning { position: absolute; bottom: 25px; right: 430px; border: 2px solid red;
     background-color: #FFFFA3; opacity: 0.75; filter:alpha(opacity=75); padding: 5px;
