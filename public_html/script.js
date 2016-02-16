@@ -636,6 +636,24 @@ function refreshSelected() {
         } else {
                 $('#selected_icaotype').text("");
         }
+		
+        if (selected.owner !== null) {
+                $('#selected_owner').text(selected.owner);
+        } else {
+                $('#selected_owner').text("");
+        }
+		
+        if (selected.type !== null) {
+                $('#selected_type').text(selected.type);
+        } else {
+                $('#selected_type').text("");
+        }
+		
+        if (selected.manufacturer !== null) {
+                $('#selected_manufacturer').text(selected.manufacturer);
+        } else {
+                $('#selected_manufacturer').text("");
+        }
 
         var emerg = document.getElementById('selected_emergency');
         if (selected.squawk in SpecialSquawks) {

@@ -41,6 +41,9 @@ function PlaneObject(icao) {
         // request metadata
         this.registration = null;
         this.icaotype = null;
+        this.manufacturer = null;
+        this.owner = null;
+        this.type = null;
         getAircraftData(this.icao).done(function(data) {
                 if ("r" in data) {
                         this.registration = data.r;
@@ -49,7 +52,19 @@ function PlaneObject(icao) {
                 if ("t" in data) {
                         this.icaotype = data.t;
                 }
-
+				
+                if ("m" in data) {
+                        this.manufacturer = data.m;
+                }
+				
+                if ("o" in data) {
+                        this.owner = data.o;
+                }
+				
+                if ("s" in data) {
+                        this.type = data.s;
+                }
+                
                 if (this.selected) {
 		        refreshSelected();
                 }
