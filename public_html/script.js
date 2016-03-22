@@ -468,7 +468,7 @@ function initialize_map() {
   // Add home marker if requested
   if (SitePosition) {
     var markerImage = new google.maps.MarkerImage(
-      'http://maps.google.com/mapfiles/kml/pal4/icon57.png',
+      'https://maps.google.com/mapfiles/kml/pal4/icon57.png',
       new google.maps.Size(32, 32),   // Image size
       new google.maps.Point(0, 0),    // Origin point of image
       new google.maps.Point(16, 16)); // Position where marker should point 
@@ -613,7 +613,7 @@ function refreshSelected() {
   $('#dump1090_infoblock').css('display','none');
   $('#selected_infoblock').css('display','block');
 
-  $('#selected_flightaware_link').attr('href','http://flightaware.com/live/modes/'+selected.icao+'/redirect');
+  $('#selected_flightaware_link').attr('href','https://flightaware.com/live/modes/'+selected.icao+'/redirect');
 
   if (selected.flight !== null && selected.flight !== "") {
     $('#selected_callsign').text(selected.flight);
