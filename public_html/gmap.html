@@ -1,3 +1,4 @@
+<!DOCTYPE HTML>
 <html>
 	<head>
 		<meta charset="utf-8"/>
@@ -21,7 +22,7 @@
 	
 	<body onload="initialize()">
 		<div id="loader" class="hidden">
-			<img src="spinny.gif" id="spinny">
+			<img src="spinny.gif" id="spinny" alt="Loading...">
 			<progress id="loader_progress"></progress>
 		</div>
 
@@ -46,23 +47,23 @@
 		<div id="sidebar_container">
 			<div id="sidebar_canvas">
 				<div id="timestamps">
-					<table width="100%">
+					<table style="width: 100%">
 						<tr>
-							<td align="center"> <canvas id="utcclock"></canvas> </td>
-							<td align="center"> <canvas id="receiverclock"></canvas> </td>
+							<td style="text-align: center"> <canvas id="utcclock"></canvas> </td>
+							<td style="text-align: center"> <canvas id="receiverclock"></canvas> </td>
 						</tr>
 
 						<tr>
-							<td align="center">UTC</td>
-							<td align="center">Last Update</td>
+							<td style="text-align: center">UTC</td>
+							<td style="text-align: center">Last Update</td>
 						</tr>
 					</table>
 				</div> <!-- timestamps -->
 				
 				<div id="sudo_buttons">
-					<table width="100%">
+					<table style="width: 100%">
 						<tr>
-							<td width="150" style="text-align: center;" class="pointer">
+							<td style="width: 150px; text-align: center;" class="pointer">
 								[ <span onclick="resetMap();">Reset Map</span> ]
 							</td>
 						</tr>
@@ -70,12 +71,12 @@
 				</div> <!-- sudo_buttons -->
 
 				<div id="dump1090_infoblock">
-					<table width="100%">
+					<table style="width: 100%">
 						<tr class="infoblock_heading">
 							<td>
 								<b id="infoblock_name">DUMP1090</b>
 							</td>
-							<td align="right">
+							<td style="text-align: right">
 								<a href="https://github.com/mutability/dump1090" id="dump1090_version" target="_blank"></a>
 							</td>
 						</tr>
@@ -108,16 +109,16 @@
 				</div> <!-- dump1090_infoblock -->
 
 				<div id="selected_infoblock" class="hidden">
-					<table width="100%">
+					<table style="width: 100%">
 						<tr class="infoblock_heading">
 							<td colspan="2">
 								<b>
 									<span id="selected_callsign" onclick="toggleFollowSelected();" class="pointer">n/a</span>
 								</b>
-								<span id="selected_follow" onclick="toggleFollowSelected();" class="pointer">&#x21D2</span>
+								<span id="selected_follow" onclick="toggleFollowSelected();" class="pointer">&#x21D2;</span>
 
 								<span id="selected_flag">
-									<img width="20" height="12">
+									<img style="width: 20px; height=12px" src="about:blank" alt="Flag">
 								</span>
 
 								<a href="http://www.airframes.org/" onclick="document.getElementById('horrible_hack').submit.call(document.getElementById('airframes_post')); return false;">
@@ -139,8 +140,8 @@
 						</tr>
 
 						<tr class="infoblock_body">
-							<td width="55%">Altitude: <span id="selected_altitude"></span></td>
-							<td width="45%">Squawk: <span id="selected_squawk"></span></td>
+							<td style="width: 55%">Altitude: <span id="selected_altitude"></span></td>
+							<td style="width: 45%">Squawk: <span id="selected_squawk"></span></td>
 						</tr>
 
 						<tr class="infoblock_body">
@@ -164,33 +165,33 @@
 				</div> <!-- selected_infoblock -->
 
 				<div id="planes_table">
-					<table id="tableinfo" width="100%">
+					<table id="tableinfo" style="width: 100%">
 						<thead style="background-color: #BBBBBB; cursor: pointer;">
 							<tr>
 								<td id="icao" onclick="sortByICAO();">ICAO</td>
 								<td id="flag" onclick="sortByCountry()"><!-- column for flag image --></td>
 								<td id="flight" onclick="sortByFlight();">Flight</td>
-								<td id="squawk" onclick="sortBySquawk();" align="right">Squawk</td>
-								<td id="altitude" onclick="sortByAltitude();" align="right">Altitude</td>
-								<td id="speed" onclick="sortBySpeed();" align="right">Speed</td>
-								<td id="distance" onclick="sortByDistance();" align="right">Distance</td>
-								<td id="track" onclick="sortByTrack();" align="right">Track</td>
-								<td id="msgs" onclick="sortByMsgs();" align="right">Msgs</td>
-								<td id="seen" onclick="sortBySeen();" align="right">Age</td>
+								<td id="squawk" onclick="sortBySquawk();" style="text-align: right">Squawk</td>
+								<td id="altitude" onclick="sortByAltitude();" style="text-align: right">Altitude</td>
+								<td id="speed" onclick="sortBySpeed();" style="text-align: right">Speed</td>
+								<td id="distance" onclick="sortByDistance();" style="text-align: right">Distance</td>
+								<td id="track" onclick="sortByTrack();" style="text-align: right">Track</td>
+								<td id="msgs" onclick="sortByMsgs();" style="text-align: right">Msgs</td>
+								<td id="seen" onclick="sortBySeen();" style="text-align: right">Age</td>
 							</tr>
 						</thead>
 						<tbody>
 							<tr id="plane_row_template" class="plane_table_row hidden">
 								<td>ICAO</td>
-								<td><img width="20" height="12"></td>
+								<td><img style="width: 20px; height=12px" src="about:blank" alt="Flag"></td>
 								<td>FLIGHT</td>
-								<td align="right">SQUAWK</td>
-								<td align="right">ALTITUDE</td>
-								<td align="right">SPEED</td>
-								<td align="right">DISTANCE</td>
-								<td align="right">TRACK</td>
-								<td align="right">MSGS</td>
-								<td align="right">SEEN</td>
+								<td style="text-align: right">SQUAWK</td>
+								<td style="text-align: right">ALTITUDE</td>
+								<td style="text-align: right">SPEED</td>
+								<td style="text-align: right">DISTANCE</td>
+								<td style="text-align: right">TRACK</td>
+								<td style="text-align: right">MSGS</td>
+								<td style="text-align: right">SEEN</td>
 							</tr>
 						</tbody>
 					</table>
