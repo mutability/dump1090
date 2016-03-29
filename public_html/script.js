@@ -620,6 +620,7 @@ function refreshSelected() {
     $('#selected_links').css('display','inline');
     $('#selected_fr24_link').attr('href','http://fr24.com/'+selected.flight);
     $('#selected_flightstats_link').attr('href','http://www.flightstats.com/go/FlightStatus/flightStatusByFlight.do?flightNumber='+selected.flight);
+    $('#selected_planefinder_link').attr('href','https://planefinder.net/flight/'+selected.flight);
   } else {
     $('#selected_callsign').text('n/a');
     $('#selected_links').css('display','none');
