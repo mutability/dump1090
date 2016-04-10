@@ -235,10 +235,28 @@ struct net_service *makeFatsvOutputService(void)
     return serviceInit("FATSV TCP output", &Modes.fatsv_out, NULL, NULL, NULL);
 }
 
+void deinitNet()
+{
+    WSACleanup();
+}
+
 void modesInitNet(void) {
     struct net_service *s;
 
-    signal(SIGPIPE, SIG_IGN);
+    // Init windows sockets
+    WSADATA wsaData;
+    int err;
+
+    // Try to start the windows socket support
+    if (err = WSAStartup(MAKEWORD(2, 2), &wsaData) != 0)
+    {
+        fprintf(stderr, "WSAStartup returned error: %02x\n", err);
+        exit(1);
+    }
+
+    // Workaround to automatic release of the Windows sockets
+    atexit(deinitNet);
+
     Modes.clients = NULL;
     Modes.services = NULL;
 
@@ -297,8 +315,8 @@ static void modesCloseClient(struct client *c) {
     // This is because there may be stackframes still pointing at this
     // client (unpredictably: reading from client A may cause client B to
     // be freed)
+    closesocket(c->fd);
 
-    close(c->fd);
     c->service->connections--;
 
     // mark it as inactive and ready to be freed
@@ -317,7 +335,7 @@ static void flushWrites(struct net_writer *writer) {
         if (!c->service)
             continue;
         if (c->service == writer->service) {
-            int nwritten = write(c->fd, writer->data, writer->dataUsed);
+            int nwritten = send(c->fd, writer->data, writer->dataUsed, 0 );
             if (nwritten != writer->dataUsed) {
                 modesCloseClient(c);
             }
@@ -1225,50 +1243,9 @@ char *generateHistoryJson(const char *url_path, int *len)
 }
 
 // Write JSON to file
-void writeJsonToFile(const char *file, char * (*generator) (const char *,int*))
+void writeJsonToFile(const char *file, char * (*generator) (const char *, int*))
 {
-    char pathbuf[PATH_MAX];
-    char tmppath[PATH_MAX];
-    int fd;
-    int len = 0;
-    mode_t mask;
-    char *content;
-
-    if (!Modes.json_dir)
-        return;
-
-    snprintf(tmppath, PATH_MAX, "%s/%s.XXXXXX", Modes.json_dir, file);
-    tmppath[PATH_MAX-1] = 0;
-    fd = mkstemp(tmppath);
-    if (fd < 0)
-        return;
-    
-    mask = umask(0);
-    umask(mask);
-    fchmod(fd, 0644 & ~mask);
-
-    snprintf(pathbuf, PATH_MAX, "/data/%s", file);
-    pathbuf[PATH_MAX-1] = 0;
-    content = generator(pathbuf, &len);
-
-    if (write(fd, content, len) != len)
-        goto error_1;
-
-    if (close(fd) < 0)
-        goto error_2;
-
-    snprintf(pathbuf, PATH_MAX, "%s/%s", Modes.json_dir, file);
-    pathbuf[PATH_MAX-1] = 0;
-    rename(tmppath, pathbuf);
-    free(content);
-    return;
-
- error_1:
-    close(fd);
- error_2:
-    unlink(tmppath);
-    free(content);
-    return;
+#pragma message("writeJsonToFile not implemented yet");
 }
 
 
@@ -1449,8 +1426,8 @@ static int handleHTTPRequest(struct client *c, char *p) {
     }
 
     // Send header and content.
-    if ( (write(c->fd, hdr, hdrlen) != hdrlen) 
-      || (write(c->fd, content, clen) != clen) ) {
+    if ( (send(c->fd, hdr, hdrlen, 0) != hdrlen) 
+      || (send(c->fd, content, clen, 0) != clen) ) {
         free(content);
         return 1;
     }
@@ -1490,7 +1467,8 @@ static void modesReadFromClient(struct client *c) {
             left = MODES_CLIENT_BUF_SIZE;
             // If there is garbage, read more to discard it ASAP
         }
-        nread = read(c->fd, c->buf+c->buflen, left);
+        nread = recv(c->fd, c->buf+c->buflen, left, 0);
+        if (nread < 0) {errno = WSAGetLastError();}
 
         // If we didn't get all the data we asked for, then return once we've processed what we did get.
         if (nread != left) {
@@ -1502,7 +1480,7 @@ static void modesReadFromClient(struct client *c) {
             return;
         }
 
-        if (nread < 0 && (errno == EAGAIN || errno == EWOULDBLOCK)) { // No data available (not really an error)
+        if (nread < 0 && errno == EWOULDBLOCK) { // No data available (not really an error)
             return;
         }
 

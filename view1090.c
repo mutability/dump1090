@@ -28,35 +28,13 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 #include "dump1090.h"
-//
-// ============================= Utility functions ==========================
-//
-void sigintHandler(int dummy) {
-    MODES_NOTUSED(dummy);
-    signal(SIGINT, SIG_DFL);  // reset signal handler - bit extra safety
-    Modes.exit = 1;           // Signal to threads that we are done
-}
-//
-// =============================== Terminal handling ========================
-//
-#ifndef _WIN32
-// Get the number of rows after the terminal changes size.
-int getTermRows() { 
-    struct winsize w; 
-    ioctl(STDOUT_FILENO, TIOCGWINSZ, &w); 
-    return (w.ws_row); 
-} 
+#include "logger.h"
+#include "console.h"
 
-// Handle resizing terminal
-void sigWinchCallback() {
-    signal(SIGWINCH, SIG_IGN);
-    Modes.interactive_rows = getTermRows();
-    interactiveShowData();
-    signal(SIGWINCH, sigWinchCallback); 
-}
-#else 
-int getTermRows() { return MODES_INTERACTIVE_ROWS;}
-#endif
+void sigintHandler(int dummy);
+void sigtermHandler(int dummy);
+void sigWinchCallback();
+
 //
 // =============================== Initialization ===========================
 //
@@ -77,17 +55,6 @@ void view1090Init(void) {
 
     pthread_mutex_init(&Modes.data_mutex,NULL);
     pthread_cond_init(&Modes.data_cond,NULL);
-
-#ifdef _WIN32
-    if ( (!Modes.wsaData.wVersion) 
-      && (!Modes.wsaData.wHighVersion) ) {
-      // Try to start the windows socket support
-      if (WSAStartup(MAKEWORD(2,1),&Modes.wsaData) != 0) 
-        {
-        fprintf(stderr, "WSAStartup returned Error\n");
-        }
-      }
-#endif
 
     // Validate the users Lat/Lon home location inputs
     if ( (Modes.fUserLat >   90.0)  // Latitude must be -90 to +90
@@ -141,6 +108,7 @@ void showHelp(void) {
     );
 }
 
+
 //
 //=========================================================================
 //
@@ -154,6 +122,8 @@ int main(int argc, char **argv) {
     // Set sane defaults
 
     view1090InitConfig();
+
+    // signal handlers:
     signal(SIGINT, sigintHandler); // Define Ctrl/C handler (exit program)
 
     // Parse the command line options
@@ -202,16 +172,8 @@ int main(int argc, char **argv) {
         }
     }
 
-#ifdef _WIN32
-    // Try to comply with the Copyright license conditions for binary distribution
-    if (!Modes.quiet) {showCopyright();}
-#define MSG_DONTWAIT 0
-#endif
-
-#ifndef _WIN32
     // Setup for SIGWINCH for handling lines
     if (Modes.interactive) {signal(SIGWINCH, sigWinchCallback);}
-#endif
 
     // Initialization
     view1090Init();

@@ -53,69 +53,15 @@
 
 #include <stdarg.h>
 
+#include "logger.h"
+
+#include "console.h"
+
 static int verbose_device_search(char *s);
 
-//
-// ============================= Utility functions ==========================
-//
-
-static void log_with_timestamp(const char *format, ...) __attribute__((format (printf, 1, 2) ));
-
-static void log_with_timestamp(const char *format, ...)
-{
-    char timebuf[128];
-    char msg[1024];
-    time_t now;
-    struct tm local;
-    va_list ap;
-
-    now = time(NULL);
-    localtime_r(&now, &local);
-    strftime(timebuf, 128, "%c %Z", &local);
-    timebuf[127] = 0;
-
-    va_start(ap, format);
-    vsnprintf(msg, 1024, format, ap);
-    va_end(ap);
-    msg[1023] = 0;
-
-    fprintf(stderr, "%s  %s\n", timebuf, msg);
-}
-
-static void sigintHandler(int dummy) {
-    MODES_NOTUSED(dummy);
-    signal(SIGINT, SIG_DFL);  // reset signal handler - bit extra safety
-    Modes.exit = 1;           // Signal to threads that we are done
-    log_with_timestamp("Caught SIGINT, shutting down..\n");
-}
-
-static void sigtermHandler(int dummy) {
-    MODES_NOTUSED(dummy);
-    signal(SIGTERM, SIG_DFL); // reset signal handler - bit extra safety
-    Modes.exit = 1;           // Signal to threads that we are done
-    log_with_timestamp("Caught SIGTERM, shutting down..\n");
-}
-//
-// =============================== Terminal handling ========================
-//
-#ifndef _WIN32
-// Get the number of rows after the terminal changes size.
-int getTermRows() { 
-    struct winsize w; 
-    ioctl(STDOUT_FILENO, TIOCGWINSZ, &w); 
-    return (w.ws_row); 
-} 
-
-// Handle resizing terminal
-void sigWinchCallback() {
-    signal(SIGWINCH, SIG_IGN);
-    Modes.interactive_rows = getTermRows();
-    interactiveShowData();
-    signal(SIGWINCH, sigWinchCallback); 
-}
-#else 
-int getTermRows() { return MODES_INTERACTIVE_ROWS;}
-#endif
+void sigintHandler(int dummy);
+void sigtermHandler(int dummy);
+void sigWinchCallback();
 
 static void start_cpu_timing(struct timespec *start_time)
 {
@@ -515,7 +461,7 @@ void readDataFromFile(void) {
     pthread_mutex_lock(&Modes.data_mutex);
     while (!Modes.exit && !eof) {
         ssize_t nread, toread;
-        void *r;
+        char *r;
         struct mag_buf *outbuf, *lastbuf;
         unsigned next_free_buffer;
         unsigned slen;
@@ -545,7 +491,7 @@ void readDataFromFile(void) {
         clock_gettime(CLOCK_REALTIME, &outbuf->sysTimestamp);
 
         toread = MODES_MAG_BUF_SAMPLES * bytes_per_sample;
-        r = readbuf;
+        r = (char*)readbuf;
         while (toread) {
             nread = read(Modes.fd, r, toread);
             if (nread <= 0) {
@@ -633,11 +579,7 @@ void *readerThreadEntryPoint(void *arg) {
     pthread_cond_signal(&Modes.data_cond);
     pthread_mutex_unlock(&Modes.data_mutex);
 
-#ifndef _WIN32
     pthread_exit(NULL);
-#else
-    return NULL;
-#endif
 }
 //
 // ============================== Snip mode =================================
@@ -922,7 +864,6 @@ int main(int argc, char **argv) {
     // Set sane defaults
     modesInitConfig();
 
-    // signal handlers:
     signal(SIGINT, sigintHandler);
     signal(SIGTERM, sigtermHandler);
 
@@ -1083,7 +1024,6 @@ int main(int argc, char **argv) {
             Modes.oversample = 1;
         } else if (!strcmp(argv[j], "--html-dir") && more) {
             Modes.html_dir = strdup(argv[++j]);
-#ifndef _WIN32
         } else if (!strcmp(argv[j], "--write-json") && more) {
             Modes.json_dir = strdup(argv[++j]);
         } else if (!strcmp(argv[j], "--write-json-every") && more) {
@@ -1092,7 +1032,6 @@ int main(int argc, char **argv) {
                 Modes.json_interval = 100;
         } else if (!strcmp(argv[j], "--json-location-accuracy") && more) {
             Modes.json_location_accuracy = atoi(argv[++j]);
-#endif
         } else {
             fprintf(stderr,
                 "Unknown or not enough arguments for option '%s'.\n\n",
@@ -1102,15 +1041,8 @@ int main(int argc, char **argv) {
         }
     }
 
-#ifdef _WIN32
-    // Try to comply with the Copyright license conditions for binary distribution
-    if (!Modes.quiet) {showCopyright();}
-#endif
-
-#ifndef _WIN32
     // Setup for SIGWINCH for handling lines
     if (Modes.interactive) {signal(SIGWINCH, sigWinchCallback);}
-#endif
 
     // Initialization
     log_with_timestamp("%s %s starting up.", MODES_DUMP1090_VARIANT, MODES_DUMP1090_VERSION);
@@ -1252,11 +1184,7 @@ int main(int argc, char **argv) {
     cleanup_converter(Modes.converter_state);
     log_with_timestamp("Normal exit.");
 
-#ifndef _WIN32
     pthread_exit(0);
-#else
-    return (0);
-#endif
 }
 //
 //=========================================================================

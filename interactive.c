@@ -49,6 +49,8 @@
 
 #include "dump1090.h"
 
+int cls();
+
 //
 //========================= Interactive mode ===============================
 
@@ -90,11 +92,8 @@ void interactiveShowData(void) {
 
     progress = spinner[(now/1000)%4];
 
-#ifndef _WIN32
-    printf("\x1b[H\x1b[2J");    // Clear the screen
-#else
+    // Clear the screen
     cls();
-#endif
 
     if (Modes.interactive_rtl1090 == 0) {
         printf (

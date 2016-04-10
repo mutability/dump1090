@@ -186,7 +186,6 @@ typedef struct rtlsdr_dev rtlsdr_dev_t;
 #define MODES_DEBUG_NOPREAMBLE_LEVEL 25
 
 #define MODES_INTERACTIVE_REFRESH_TIME 250      // Milliseconds
-#define MODES_INTERACTIVE_ROWS          22      // Rows on screen
 #define MODES_INTERACTIVE_DISPLAY_TTL 60000     // Delete from display after 60 seconds
 
 #define MODES_NET_HEARTBEAT_INTERVAL 60000      // milliseconds
@@ -276,10 +275,6 @@ struct {                             // Internal state
     struct net_writer beast_out;     // Beast-format output
     struct net_writer sbs_out;       // SBS-format output
     struct net_writer fatsv_out;     // FATSV-format output
-
-#ifdef _WIN32
-    WSADATA        wsaData;          // Windows socket initialisation
-#endif
 
     // Configuration
     char *filename;                  // Input form file, --ifile option
