@@ -61,7 +61,7 @@ if [ -n "$PPM" ]; then ARGS="$ARGS --ppm $PPM"; fi
 if [ "x$FIX_CRC" = "xyes" ]; then ARGS="$ARGS --fix"; fi
 if [ -n "$LAT" ]; then ARGS="$ARGS --lat $LAT"; fi
 if [ -n "$LON" ]; then ARGS="$ARGS --lon $LON"; fi
-ARGS="$ARGS --max-range $MAX_RANGE"; fi
+if [ -n "$MAX_RANGE" ]; then ARGS="$ARGS --max-range $MAX_RANGE"; fi
 
 # net:
 
