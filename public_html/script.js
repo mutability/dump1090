@@ -757,6 +757,18 @@ function refreshSelected() {
         
         $('#selected_sitedist').text(format_distance_long(selected.sitedist));
         $('#selected_rssi').text(selected.rssi.toFixed(1) + ' dBFS');
+
+        $('#selected_airdist').text(format_distance_long(selected.airdist));
+        if (selected.min_airdist < selected.airdist)
+                $('#selected_minairdist').text(' (min: ' + _dist_to_unit(selected.min_airdist, true) + ')');
+        else
+                $('#selected_minairdist').text('');
+
+        $('#selected_elevation').text(selected.elevation.toFixed(1) + DEGREES);
+        if (selected.max_elevation > selected.elevation)
+                $('#selected_maxelevation').text(' (max: ' + selected.max_elevation.toFixed(1) + DEGREES + ')');
+        else
+                $('#selected_maxelevation').text('');
 }
 
 // Refreshes the larger table of all the planes
@@ -797,9 +809,10 @@ function refreshTableInfo() {
                         tableplane.tr.cells[4].textContent = format_altitude_brief(tableplane.altitude, tableplane.vert_rate);
                         tableplane.tr.cells[5].textContent = format_speed_brief(tableplane.speed);
                         tableplane.tr.cells[6].textContent = format_distance_brief(tableplane.sitedist);
-                        tableplane.tr.cells[7].textContent = format_track_brief(tableplane.track);
-                        tableplane.tr.cells[8].textContent = tableplane.messages;
-                        tableplane.tr.cells[9].textContent = tableplane.seen.toFixed(0);
+                        tableplane.tr.cells[7].textContent = (tableplane.elevation !== null ? tableplane.elevation.toFixed(1) + DEGREES : "");
+                        tableplane.tr.cells[8].textContent = format_track_brief(tableplane.track);
+                        tableplane.tr.cells[9].textContent = tableplane.messages;
+                        tableplane.tr.cells[10].textContent = tableplane.seen.toFixed(0);
                         tableplane.tr.className = classes;
 		}
 	}
@@ -838,6 +851,7 @@ function sortBySquawk()   { sortBy('squawk',  compareAlpha,   function(x) { retu
 function sortByAltitude() { sortBy('altitude',compareNumeric, function(x) { return (x.altitude == "ground" ? -1e9 : x.altitude); }); }
 function sortBySpeed()    { sortBy('speed',   compareNumeric, function(x) { return x.speed; }); }
 function sortByDistance() { sortBy('sitedist',compareNumeric, function(x) { return x.sitedist; }); }
+function sortByElevation(){ sortBy('elevation',compareNumeric,function(x) { return x.elevation; }); }
 function sortByTrack()    { sortBy('track',   compareNumeric, function(x) { return x.track; }); }
 function sortByMsgs()     { sortBy('msgs',    compareNumeric, function(x) { return x.messages; }); }
 function sortBySeen()     { sortBy('seen',    compareNumeric, function(x) { return x.seen; }); }

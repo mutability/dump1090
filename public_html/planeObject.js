@@ -17,6 +17,10 @@ function PlaneObject(icao) {
         this.position  = null;
         this.position_from_mlat = false
         this.sitedist  = null;
+        this.airdist   = null;
+        this.min_airdist = null;
+        this.elevation = null;
+        this.max_elevation = null;
 
 	// Data packet numbers
 	this.messages  = null;
@@ -361,6 +365,12 @@ PlaneObject.prototype.updateData = function(receiver_timestamp, data) {
                 if (SitePosition !== null) {
                         var WGS84 = new ol.Sphere(6378137);
                         this.sitedist = WGS84.haversineDistance(SitePosition, this.position);
+                        this.airdist = Math.hypot(this.sitedist, this.altitude * 0.3048);
+                        this.elevation = Math.acos(this.sitedist / this.airdist) * 180 / Math.PI;
+                        if (this.min_airdist == null || this.airdist < this.min_airdist)
+                                this.min_airdist = this.airdist;
+                        if (this.max_elevation == null || this.elevation > this.max_elevation)
+                                this.max_elevation = this.elevation;
                 }
 
                 this.position_from_mlat = false;
