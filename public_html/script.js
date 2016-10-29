@@ -354,8 +354,15 @@ function initialize_map() {
                 sortByDistance();
         } else {
 	        SitePosition = null;
+                // hide distance and elevation lines for selected plane
+                document.getElementById("selected_sitedist_row").style.display = 'none';
+                document.getElementById("selected_airdist_row").style.display = 'none';
+                document.getElementById("selected_elevation_row").style.display = 'none';
+                // hide distance and elevation columns in table
                 PlaneRowTemplate.cells[6].style.display = 'none'; // hide distance column
                 document.getElementById("distance").style.display = 'none'; // hide distance header
+                PlaneRowTemplate.cells[7].style.display = 'none'; // hide elevation column
+                document.getElementById("elevation").style.display = 'none'; // hide elevation header
                 sortByAltitude();
         }
 
