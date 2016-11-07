@@ -30,6 +30,7 @@ var TrackedAircraftPositions = 0;
 var TrackedHistorySize = 0;
 
 var SitePosition = null;
+var SiteHeight = 0;
 
 var ReceiverClock = null;
 
@@ -157,6 +158,17 @@ function fetchData() {
         });
 }
 
+function getUrlVars() {
+	var vars = {};
+	var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi,
+			function(m,key,value)
+			{
+				vars[key] = value;
+			}
+		    );
+	return vars;
+}
+
 var PositionHistorySize = 0;
 function initialize() {
         // Set page basics
@@ -194,7 +206,23 @@ function initialize() {
                 // disable ticking on the receiver clock, we will update it ourselves
                 ReceiverClock.tick = (function(){})
         }
-
+	
+	var SiteVars = getUrlVars();
+	var lat = parseFloat(SiteVars["lat"]);
+	var lon = parseFloat(SiteVars["lon"]);
+	var height = parseFloat(SiteVars["height"]);
+	
+	if (!isNaN(lat) && !isNaN(lon)) {
+                SiteLat = lat;
+                SiteLon = lon;
+                DefaultCenterLat = lat;
+                DefaultCenterLon = lon;
+	}
+	if (isNaN(height))
+		SiteHeight = 0;
+	else
+		SiteHeight = height;
+	
         $("#loader").removeClass("hidden");
         
         // Get receiver metadata, reconfigure using it, then continue
@@ -219,6 +247,12 @@ function initialize() {
                 })
 
                 .always(function() {
+			if (!isNaN(lat) && !isNaN(lon)) {
+				SiteLat = lat;
+				SiteLon = lon;
+				DefaultCenterLat = lat;
+				DefaultCenterLon = lon;
+			}
                         initialize_map();
                         start_load_history();
                 });

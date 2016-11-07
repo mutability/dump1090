@@ -363,10 +363,16 @@ PlaneObject.prototype.updateData = function(receiver_timestamp, data) {
                 this.last_position_time = receiver_timestamp - data.seen_pos;
 
                 if (SitePosition !== null) {
-                        var WGS84 = new ol.Sphere(6378137);
+			const R = 6378137.0;
+                        var WGS84 = new ol.Sphere(R);
                         this.sitedist = WGS84.haversineDistance(SitePosition, this.position);
-                        this.airdist = Math.hypot(this.sitedist, this.altitude * 0.3048);
-                        this.elevation = Math.acos(this.sitedist / this.airdist) * 180 / Math.PI;
+			var delta = this.sitedist / R;
+			var SiteR = R + SiteHeight;
+			var PlaneR = R + this.altitude * 0.3048;
+		      //this.airdist = Math.hypot(this.sitedist, this.altitude * 0.3048 - SiteHight);
+                        this.airdist = Math.sqrt(SiteR*SiteR + PlaneR*PlaneR - 2*SiteR*PlaneR*Math.cos(delta));
+                      //this.elevation = Math.acos(this.sitedist / this.airdist) * 180 / Math.PI;
+                        this.elevation = Math.asin((PlaneR*PlaneR - SiteR*SiteR - this.airdist*this.airdist) / (2*SiteR*this.airdist)) * 180 / Math.PI;
                         if (this.min_airdist == null || this.airdist < this.min_airdist)
                                 this.min_airdist = this.airdist;
                         if (this.max_elevation == null || this.elevation > this.max_elevation)
