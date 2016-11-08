@@ -217,6 +217,7 @@ function initialize() {
                 SiteLon = lon;
                 DefaultCenterLat = lat;
                 DefaultCenterLon = lon;
+		SiteShow = true;
 	}
 	if (isNaN(height))
 		SiteHeight = 0;
@@ -1007,4 +1008,70 @@ function resetMap() {
 	OLMap.getView().setCenter(ol.proj.fromLonLat([CenterLon, CenterLat]));
 	
 	selectPlaneByHex(null,false);
+}
+
+function setSitePos() {
+	// Set localStorage values and map settings
+	var center = ol.proj.toLonLat(OLMap.getView().getCenter(), OLMap.getView().getProjection());
+	localStorage['CenterLon'] = DefaultCenterLon = CenterLon = SiteLon = center[0];
+	localStorage['CenterLat'] = DefaultCenterLat = CenterLat = SiteLat = center[1];
+	SiteHeight = 0;
+
+	// Set new URL
+	var new_url = window.location.href;
+	var pos = new_url.indexOf("?");
+	if (pos >= 0)
+		new_url = new_url.substr(0, pos);
+	new_url += "?lat=" + SiteLat.toFixed(6) + "&lon=" + SiteLon.toFixed(6) + "&height=" + SiteHeight;
+	window.history.pushState("", "", new_url);
+	
+	// Reload page if site position is not yet set
+	if (!SitePosition)
+		location.reload();
+
+	// Set site position
+	SitePosition = [SiteLon, SiteLat];
+	sortByDistance();
+
+	// Clear current site features
+	StaticFeatures.clear();
+
+	// Set home marker
+	var markerStyle = new ol.style.Style({
+		image: new ol.style.Circle({
+			radius: 7,
+			snapToPixel: false,
+			fill: new ol.style.Fill({color: 'black'}),
+			stroke: new ol.style.Stroke({
+				color: 'white', width: 2
+			})
+		})
+	});
+
+	var feature = new ol.Feature(new ol.geom.Point(ol.proj.fromLonLat(SitePosition)));
+	feature.setStyle(markerStyle);
+	StaticFeatures.push(feature);
+
+	if (SiteCircles) {
+		var circleStyle = new ol.style.Style({
+			fill: null,
+			stroke: new ol.style.Stroke({
+				color: '#000000',
+				width: 1
+			})
+		});
+
+		for (var i=0; i < SiteCirclesDistances.length; ++i) {
+			var distance = SiteCirclesDistances[i] * 1000.0;
+			if (!Metric) {
+				distance *= 1.852;
+			}
+
+			var circle = make_geodesic_circle(SitePosition, distance, 360);
+			circle.transform('EPSG:4326', 'EPSG:3857');
+			var feature = new ol.Feature(circle);
+			feature.setStyle(circleStyle);
+			StaticFeatures.push(feature);
+		}
+	}
 }
