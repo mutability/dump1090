@@ -672,8 +672,10 @@ function refreshPageTitle() {
         }
 
         if (MessageRateInTitle) {
+            if(MessageRate != null) {
                 if (subtitle) subtitle += ' | ';
                 subtitle += MessageRate.toFixed(1) + '/s';
+            }
         }
 
         document.title = PageName + ' - ' + subtitle;
