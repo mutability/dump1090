@@ -98,13 +98,13 @@ void interactiveShowData(void) {
 
     if (Modes.interactive_rtl1090 == 0) {
         printf (
-" Hex    Mode  Sqwk  Flight   Alt    Spd  Hdg    Lat      Long   RSSI  Msgs  Ti%c\n", progress);
+" Hex    Mode  Sqwk  Flight   Alt    Spd  Hdg    Lat      Long    RSSI  Msgs  Ti%c\n", progress);
     } else {
         printf (
 " Hex   Flight   Alt      V/S GS  TT  SSR  G*456^ Msgs    Seen %c\n", progress);
     }
     printf(
-"-------------------------------------------------------------------------------\n");
+"--------------------------------------------------------------------------------\n");
 
     while(a && (count < Modes.interactive_rows)) {
 
@@ -167,14 +167,14 @@ void interactiveShowData(void) {
                     }
 
                     if (trackDataValid(&a->airground_valid) && a->airground == AG_GROUND) {
-                        snprintf(strFl, 7," grnd");
+                        snprintf(strFl, 7," grnd ");
                     } else if (Modes.use_gnss && trackDataValid(&a->altitude_gnss_valid)) {
                         snprintf(strFl, 7, "%5dH", convert_altitude(a->altitude_gnss));
                     } else if (trackDataValid(&a->altitude_valid)) {
                         snprintf(strFl, 7, "%5d ", convert_altitude(a->altitude));
                     }
 
-                    printf("%s%06X %-4s  %-4s  %-8s %6s %3s  %3s  %7s %8s %5.1f %5d %2.0f\n",
+                    printf("%s%06X %-4s  %-4s  %-8s %6s %3s  %3s  %7s %8s  %5.1f %5d  %2.0f\n",
                            (a->addr & MODES_NON_ICAO_ADDRESS) ? "~" : " ", (a->addr & 0xffffff),
                            strMode, strSquawk, a->callsign, strFl, strGs, strTt,
                            strLat, strLon, 10 * log10(signalAverage), msgs, (now - a->seen)/1000.0);
