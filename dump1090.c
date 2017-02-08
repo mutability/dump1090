@@ -371,6 +371,14 @@ int modesInitRTLSDR(void) {
     fprintf(stderr, "Gain reported by device: %.2f dB\n",
         rtlsdr_get_tuner_gain(Modes.dev)/10.0);
 
+#ifdef HAVE_RTL_BIAST
+    if (Modes.enable_rtlsdr_biast) {
+        rtlsdr_set_bias_tee(Modes.dev, 1);
+    } else {
+        rtlsdr_set_bias_tee(Modes.dev, 0);
+    }
+#endif
+
     return 0;
 }
 //
@@ -717,6 +725,9 @@ void showHelp(void) {
 "--quiet                  Disable output to stdout. Use for daemon applications\n"
 "--show-only <addr>       Show only messages from the given ICAO on stdout\n"
 "--ppm <error>            Set receiver error in parts per million (default 0)\n"
+#ifdef HAVE_RTL_BIAST
+"--enable-rtlsdr-biast    Set bias tee supply on (default off)\n"
+#endif
 "--html-dir <dir>         Use <dir> as base directory for the internal HTTP server. Defaults to " HTMLPATH "\n"
 "--write-json <dir>       Periodically write json output to <dir> (for serving by a separate webserver)\n"
 "--write-json-every <t>   Write json output every t seconds (default 1)\n"
@@ -1073,6 +1084,10 @@ int main(int argc, char **argv) {
             exit(0);
         } else if (!strcmp(argv[j],"--ppm") && more) {
             Modes.ppm_error = atoi(argv[++j]);
+#ifdef HAVE_RTL_BIAST
+        } else if (!strcmp(argv[j], "--enable-rtlsdr-biast")) {
+            Modes.enable_rtlsdr_biast = 1;
+#endif
         } else if (!strcmp(argv[j],"--quiet")) {
             Modes.quiet = 1;
         } else if (!strcmp(argv[j],"--show-only") && more) {
