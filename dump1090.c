@@ -371,14 +371,6 @@ int modesInitRTLSDR(void) {
     fprintf(stderr, "Gain reported by device: %.2f dB\n",
         rtlsdr_get_tuner_gain(Modes.dev)/10.0);
 
-#ifdef HAVE_RTL_BIAST
-    if (Modes.enable_rtlsdr_biast) {
-        rtlsdr_set_bias_tee(Modes.dev, 1);
-    } else {
-        rtlsdr_set_bias_tee(Modes.dev, 0);
-    }
-#endif
-
     return 0;
 }
 //
@@ -682,7 +674,7 @@ void showHelp(void) {
 "--iformat <format>       Sample format for --ifile: UC8 (default), SC16, or SC16Q11\n"
 "--throttle               When reading from a file, play back in realtime, not at max speed\n"
 "--interactive            Interactive mode refreshing data on screen. Implies --throttle\n"
-"--interactive-rows <num> Max number of rows in interactive mode (default: 15)\n"
+"--interactive-rows <num> Max number of rows in interactive mode (default: 22)\n"
 "--interactive-ttl <sec>  Remove from list if idle for <sec> (default: 60)\n"
 "--interactive-rtl1090    Display flight table in RTL1090 format\n"
 "--raw                    Show only messages hex values\n"
@@ -714,7 +706,7 @@ void showHelp(void) {
 "--aggressive             More CPU for more messages (two bits fixes, ...)\n"
 #endif
 "--mlat                   display raw messages in Beast ascii mode\n"
-"--stats                  With --ifile print stats at exit. No other output\n"
+"--stats                  Print stats at exit.\n"
 "--stats-range            Collect/show range histogram\n"
 "--stats-every <seconds>  Show and reset stats every <seconds> seconds\n"
 "--onlyaddr               Show only ICAO addresses (testing purposes)\n"
@@ -725,9 +717,6 @@ void showHelp(void) {
 "--quiet                  Disable output to stdout. Use for daemon applications\n"
 "--show-only <addr>       Show only messages from the given ICAO on stdout\n"
 "--ppm <error>            Set receiver error in parts per million (default 0)\n"
-#ifdef HAVE_RTL_BIAST
-"--enable-rtlsdr-biast    Set bias tee supply on (default off)\n"
-#endif
 "--html-dir <dir>         Use <dir> as base directory for the internal HTTP server. Defaults to " HTMLPATH "\n"
 "--write-json <dir>       Periodically write json output to <dir> (for serving by a separate webserver)\n"
 "--write-json-every <t>   Write json output every t seconds (default 1)\n"
@@ -1084,10 +1073,6 @@ int main(int argc, char **argv) {
             exit(0);
         } else if (!strcmp(argv[j],"--ppm") && more) {
             Modes.ppm_error = atoi(argv[++j]);
-#ifdef HAVE_RTL_BIAST
-        } else if (!strcmp(argv[j], "--enable-rtlsdr-biast")) {
-            Modes.enable_rtlsdr_biast = 1;
-#endif
         } else if (!strcmp(argv[j],"--quiet")) {
             Modes.quiet = 1;
         } else if (!strcmp(argv[j],"--show-only") && more) {

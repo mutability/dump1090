@@ -89,7 +89,7 @@ typedef struct rtlsdr_dev rtlsdr_dev_t;
 
 // ============================= #defines ===============================
 
-#define MODES_DEFAULT_PPM          52
+#define MODES_DEFAULT_PPM          0
 #define MODES_DEFAULT_FREQ         1090000000
 #define MODES_DEFAULT_WIDTH        1000
 #define MODES_DEFAULT_HEIGHT       700
@@ -295,9 +295,6 @@ struct {                             // Internal state
     rtlsdr_dev_t *dev;
     int           freq;
     int           ppm_error;
-#ifdef HAVE_RTL_BIAST
-    int           enable_rtlsdr_biast;
-#endif
 
     // Networking
     char           aneterr[ANET_ERR_LEN];
