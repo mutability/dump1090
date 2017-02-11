@@ -5,7 +5,7 @@
 PROGNAME=dump1090
 
 ifndef DUMP1090_VERSION
-DUMP1090_VERSION=$(shell git describe --tags --match=v*)
+DUMP1090_VERSION=$(shell git describe --always --tags --match=v*)
 endif
 
 ifdef PREFIX
