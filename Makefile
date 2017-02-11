@@ -17,6 +17,7 @@ endif
 CPPFLAGS+=-DMODES_DUMP1090_VERSION=\"$(DUMP1090_VERSION)\"
 CFLAGS+=-O2 -g -Wall -Werror -W
 LIBS=-lpthread -lm
+CFLAGS_RTL=`pkg-config --cflags librtlsdr libusb-1.0`
 LIBS_RTL=`pkg-config --libs librtlsdr libusb-1.0`
 CC=gcc
 
@@ -46,7 +47,7 @@ endif
 all: dump1090 view1090
 
 %.o: %.c *.h
-	$(CC) $(CPPFLAGS) $(CFLAGS) $(EXTRACFLAGS) -c $< -o $@
+	$(CC) $(CPPFLAGS) $(CFLAGS) $(CFLAGS_RTL) $(EXTRACFLAGS) -c $< -o $@
 
 dump1090.o: CFLAGS += `pkg-config --cflags librtlsdr`
 
