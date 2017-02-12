@@ -5,7 +5,7 @@
 PROGNAME=dump1090
 
 ifndef DUMP1090_VERSION
-DUMP1090_VERSION=$(shell git describe --tags --match=v*)
+DUMP1090_VERSION=$(shell git describe --always --tags --match=v*)
 endif
 
 ifdef PREFIX
@@ -48,7 +48,7 @@ all: dump1090 view1090
 %.o: %.c *.h
 	$(CC) $(CPPFLAGS) $(CFLAGS) $(EXTRACFLAGS) -c $< -o $@
 
-dump1090.o: CFLAGS += `pkg-config --cflags librtlsdr`
+dump1090.o: CFLAGS += `pkg-config --cflags librtlsdr libusb-1.0`
 
 dump1090: dump1090.o anet.o interactive.o mode_ac.o mode_s.o net_io.o crc.o demod_2400.o stats.o cpr.o icao_filter.o track.o util.o convert.o $(COMPAT)
 	$(CC) -g -o $@ $^ $(LIBS) $(LIBS_RTL) $(LDFLAGS)
