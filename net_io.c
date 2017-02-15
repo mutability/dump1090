@@ -323,11 +323,7 @@ static void flushWrites(struct net_writer *writer) {
         if (!c->service)
             continue;
         if (c->service == writer->service) {
-#ifndef _WIN32
-            int nwritten = write(c->fd, writer->data, writer->dataUsed);
-#else
-            int nwritten = send(c->fd, writer->data, writer->dataUsed, 0 );
-#endif
+            int nwritten = anetWrite(c->fd, writer->data, writer->dataUsed);
             if (nwritten != writer->dataUsed) {
                 modesCloseClient(c);
             }
@@ -1521,17 +1517,9 @@ static int handleHTTPRequest(struct client *c, char *p) {
         printf("HTTP Reply header:\n%s", hdr);
     }
 
-    /* hack hack hack. try to deal with large content */
-    anetSetSendBuffer(Modes.aneterr, c->fd, clen + hdrlen);
-
     // Send header and content.
-#ifndef _WIN32
-    if ( (write(c->fd, hdr, hdrlen) != hdrlen) 
-      || (write(c->fd, content, clen) != clen) )
-#else
-    if ( (send(c->fd, hdr, hdrlen, 0) != hdrlen) 
-      || (send(c->fd, content, clen, 0) != clen) )
-#endif
+    if ( (anetWrite(c->fd, hdr, hdrlen) != hdrlen) 
+      || (anetWrite(c->fd, content, clen) != clen) )
     {
         free(content);
         return 1;
@@ -1575,12 +1563,7 @@ static void modesReadFromClient(struct client *c) {
             left = MODES_CLIENT_BUF_SIZE;
             // If there is garbage, read more to discard it ASAP
         }
-#ifndef _WIN32
-        nread = read(c->fd, c->buf+c->buflen, left);
-#else
-        nread = recv(c->fd, c->buf+c->buflen, left, 0);
-        if (nread < 0) {errno = WSAGetLastError();}
-#endif
+        nread = anetRead(c->fd, c->buf + c->buflen, left);
 
         // If we didn't get all the data we asked for, then return once we've processed what we did get.
         if (nread != left) {
@@ -1595,7 +1578,7 @@ static void modesReadFromClient(struct client *c) {
 #ifndef _WIN32
         if (nread < 0 && (errno == EAGAIN || errno == EWOULDBLOCK)) // No data available (not really an error)
 #else
-        if (nread < 0 && errno == EWOULDBLOCK) // No data available (not really an error)
+        if (nread < 0 && WSAGetLastError() == WSAEWOULDBLOCK) // No data available (not really an error)
 #endif
         {
             return;

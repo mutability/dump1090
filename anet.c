@@ -212,9 +212,24 @@ int anetRead(int fd, char *buf, int count)
 {
     int nread, totlen = 0;
     while(totlen != count) {
-        nread = read(fd,buf,count-totlen);
+#ifndef _WIN32
+        nread = read(fd, buf, count - totlen);
+#else
+        nread = recv(fd, buf, count - totlen, 0);
+#endif
         if (nread == 0) return totlen;
-        if (nread == -1) return -1;
+        if (nread == -1) {
+#ifndef _WIN32
+            if (errno == EAGAIN || errno == EWOULDBLOCK)
+#else
+            if (WSAGetLastError() == WSAEWOULDBLOCK)
+#endif
+            {
+                if (totlen > 0)
+                    break;
+            }
+            return -1;
+        }
         totlen += nread;
         buf += nread;
     }
@@ -225,11 +240,25 @@ int anetRead(int fd, char *buf, int count)
  * (unless error is encountered) */
 int anetWrite(int fd, char *buf, int count)
 {
-    int nwritten, totlen = 0;
+    int nwritten, len, totlen = 0;
     while(totlen != count) {
-        nwritten = write(fd,buf,count-totlen);
+        len = (count - totlen) > 65535 ? 65535 : (count - totlen);
+
+#ifndef _WIN32
+        nwritten = write(fd, buf, len);
+#else
+        nwritten = send(fd, buf, len, 0);
+#endif
         if (nwritten == 0) return totlen;
-        if (nwritten == -1) return -1;
+        if (nwritten == -1) {
+#ifndef _WIN32
+            if (errno == EAGAIN || errno == EWOULDBLOCK)
+#else
+            if (WSAGetLastError() == WSAEWOULDBLOCK)
+#endif
+                continue;
+            return -1;
+        }
         totlen += nwritten;
         buf += nwritten;
     }
