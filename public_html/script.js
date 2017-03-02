@@ -39,7 +39,7 @@ var FetchPending = null;
 
 var MessageCountHistory = [];
 var MessageRate = 0;
-
+var maxDistance = 0;//to see the max distance obtained on the panel
 var NBSP='\u00a0';
 
 function processReceiverUpdate(data) {
