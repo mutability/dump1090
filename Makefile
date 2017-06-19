@@ -43,6 +43,13 @@ CFLAGS+= -DMISSING_NANOSLEEP
 COMPAT+= compat/clock_nanosleep/clock_nanosleep.o
 endif
 
+# GCC 7 and above need to add flags to compile
+GCCVERSIONGTEQ7 := $(shell expr `gcc -dumpversion | cut -f1 -d.` \>= 7)
+
+ifeq "$(GCCVERSIONGTEQ7)" "1"
+    CFLAGS += -Wno-format-truncation
+endif
+
 all: dump1090 view1090
 
 %.o: %.c *.h
