@@ -8,6 +8,7 @@ function createBaseLayers() {
 
         var world = [];
         var us = [];
+        var de = [];
 
         world.push(new ol.layer.Tile({
                 source: new ol.source.OSM(),
@@ -87,6 +88,21 @@ function createBaseLayers() {
         refreshNexrad();
         window.setInterval(refreshNexrad, 5 * 60000);
 
+        var dwd = new ol.layer.Tile({
+                source: new ol.source.TileWMS({
+                        url: 'https://maps.dwd.de/geoserver/wms',
+                        params: {LAYERS: 'dwd:RX-Produkt'},
+                        projection: 'EPSG:3857',
+                        attributions: 'Deutscher Wetterdienst (DWD)'
+                }),
+                name: 'radolan',
+                title: 'DWD RADOLAN',
+                type: 'overlay',
+                opacity: 0.8,
+                visible: false
+        });
+        de.push(dwd);
+
         if (world.length > 0) {
                 layers.push(new ol.layer.Group({
                         name: 'world',
@@ -100,6 +116,14 @@ function createBaseLayers() {
                         name: 'us',
                         title: 'US',
                         layers: us
+                }));
+        }
+
+        if (de.length > 0) {
+                layers.push(new ol.layer.Group({
+                        name: 'de',
+                        title: 'DE',
+                        layers: de
                 }));
         }
 
