@@ -98,7 +98,7 @@ function createBaseLayers() {
                 name: 'radolan',
                 title: 'DWD RADOLAN',
                 type: 'overlay',
-                opacity: 0.8,
+                opacity: 0.5,
                 visible: false
         });
         de.push(dwd);
