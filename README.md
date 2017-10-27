@@ -34,49 +34,6 @@ This means:
 * There are a couple of new layers - Bing and Mapzen - that can be enabled by providing an API key
   in config.js. See the comments in config.js for details.
 
-# Simple install via apt-get
-
-There is a repository that contains the current releases. To set up the repository:
-
-````
-$ wget https://github.com/mutability/mutability-repo/releases/download/v0.1.1/mutability-repo_0.1.1_armhf.deb
-$ sudo dpkg -i mutability-repo_0.1.1_armhf.deb
-````
-
-Then you can install and upgrade packages via apt-get as needed:
-
-````
-$ sudo apt-get update && sudo apt-get install dump1090-mutability
-$ sudo dpkg-reconfigure dump1090-mutability                           # for detailed configuration
-$ sudo apt-get install lighttpd && sudo lighty-enable-mod dump1090    # if you want to use the external webserver integration
-````
-
-Installing the mutability-repo package also installs the public key used to sign the packages; the signatures will be verified automatically by apt-get.
-
-# Manual repository setup
-
-Add a suitable entry to sources.list:
-
-````
-# echo "deb http://repo.mutability.co.uk/raspbian wheezy rpi" >/etc/apt/sources.list.d/mutabiltiy.list
-````
-
-Obtain the public key used to sign the repository release by a method of your choice. This is the signing key:
-
-````
-pub   2048R/4D731812 2014-12-28 [expires: 2015-12-28]
-      Key fingerprint = 2098 7C8D D31A 6107 E033  7CC3 80D5 57AA 4D73 1812
-uid                  Oliver Jowett (repo.mutability.co.uk archive signing key) <oliver@mutability.co.uk>
-````
-
-which is available from:
-
- * [GitHub](https://github.com/mutability/mutability-repo/raw/master/mutability.gpg)
- * [repo.mutability.co.uk](http://repo.mutability.co.uk/mutability.gpg) (caution - not HTTPS!)
- * keys.gnupg.net (`gpg --keyserver keys.gnupg.net --recv-keys 4D731812`)
-
-Install the key with `apt-key add` or by placing the keyring in `/etc/apt/trusted.gpg.d/`
-
 # Manual installation
 
 To install from packages directly:
