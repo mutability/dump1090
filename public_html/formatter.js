@@ -31,7 +31,7 @@ function format_track_long(track) {
 
 // altitude (input: alt in feet)
 // brief will always show either Metric or Imperial
-function format_altitude_brief(alt, vr) {
+function format_altitude_brief(alt, delta, vr) {
 	var alt_text;
 	
 	if (alt === null){
@@ -41,7 +41,7 @@ function format_altitude_brief(alt, vr) {
 	}
 	
 	if (Metric) {
-		alt_text = Math.round(alt * 0.3048) + NBSP; // Altitude to meters
+		alt_text = Math.round((alt + delta) * 0.3048) + NBSP; // Altitude to meters
 	} else {
 		alt_text = Math.round(alt) + NBSP;
 	}
@@ -57,14 +57,14 @@ function format_altitude_brief(alt, vr) {
 }
 
 // alt in ft
-function _alt_to_unit(alt, m) {
+function _alt_to_unit(alt, delta, m) {
 	if (m)
-		return Math.round(alt * 0.3048) + NBSP + "m";
+		return Math.round((alt + delta) * 0.3048) + NBSP + "m";
 	else
 		return Math.round(alt) + NBSP + "ft";
 }
 
-function format_altitude_long(alt, vr) {
+function format_altitude_long(alt, delta, vr) {
 	var alt_text = "";
 	
 	if (alt === null) {
@@ -74,11 +74,11 @@ function format_altitude_long(alt, vr) {
 	}
 
 	// Primary unit
-	alt_text = _alt_to_unit(alt, Metric);
+	alt_text = _alt_to_unit(alt, delta, Metric);
 
 	// Secondary unit
 	if (ShowOtherUnits) {
-		alt_text = alt_text + ' | ' + _alt_to_unit(alt, !Metric);
+		alt_text = alt_text + ' | ' + _alt_to_unit(alt, delta, !Metric);
 	}
 	
 	if (vr > 128) {

@@ -1067,10 +1067,11 @@ char *generateAircraftJson(const char *url_path, int *len) {
         p += snprintf(p, end-p, ",\"tisb\":");
         p = append_flags(p, end, a, SOURCE_TISB);
 
-        p += snprintf(p, end-p, ",\"messages\":%ld,\"seen\":%.1f,\"rssi\":%.1f}",
+        p += snprintf(p, end-p, ",\"messages\":%ld,\"seen\":%.1f,\"rssi\":%.1f,\"gnss_delta\":%d}",
                       a->messages, (now - a->seen)/1000.0,
                       10 * log10((a->signalLevel[0] + a->signalLevel[1] + a->signalLevel[2] + a->signalLevel[3] +
-                                  a->signalLevel[4] + a->signalLevel[5] + a->signalLevel[6] + a->signalLevel[7] + 1e-5) / 8));
+                                  a->signalLevel[4] + a->signalLevel[5] + a->signalLevel[6] + a->signalLevel[7] + 1e-5) / 8),
+                      trackDataValid(&a->gnss_delta_valid) ? a->gnss_delta : 0);
         
         // If we're getting near the end of the buffer, expand it.
         if ((end - p) < 512) {

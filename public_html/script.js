@@ -752,7 +752,17 @@ function refreshSelected() {
                 emerg.className = 'hidden';
         }
 
-        $("#selected_altitude").text(format_altitude_long(selected.altitude, selected.vert_rate));
+        $("#selected_altitude").text(format_altitude_long(selected.altitude, selected.gnss_delta, selected.vert_rate));
+
+        if (typeof selected.vert_rate === "undefined") {
+                $("#selected_vert_rate").text('n/a');
+        } else if (selected.vert_rate == 0) {
+                $("#selected_vert_rate").text('0');
+        } else if (Math.abs(selected.vert_rate) < 100) {
+                $("#selected_vert_rate").text(Math.round(selected.vert_rate * 0.3048) + ' m/min');
+        } else {
+                $("#selected_vert_rate").text(Math.round(selected.vert_rate * 0.3048) + ' m/min (' + Math.round(selected.vert_rate/50)*50 + ' ft)');
+        }
 
         if (selected.squawk === null || selected.squawk === '0000') {
                 $('#selected_squawk').text('n/a');
@@ -850,7 +860,7 @@ function refreshTableInfo() {
                         // ICAO doesn't change
                         tableplane.tr.cells[2].textContent = (tableplane.flight !== null ? tableplane.flight : "");
                         tableplane.tr.cells[3].textContent = (tableplane.squawk !== null ? tableplane.squawk : "");
-                        tableplane.tr.cells[4].textContent = format_altitude_brief(tableplane.altitude, tableplane.vert_rate);
+                        tableplane.tr.cells[4].textContent = format_altitude_brief(tableplane.altitude, tableplane.gnss_delta, tableplane.vert_rate);
                         tableplane.tr.cells[5].textContent = format_speed_brief(tableplane.speed);
                         tableplane.tr.cells[6].textContent = format_distance_brief(tableplane.sitedist);
                         tableplane.tr.cells[7].textContent = (tableplane.elevation !== null ? tableplane.elevation.toFixed(1) + DEGREES : "");

@@ -11,6 +11,7 @@ function PlaneObject(icao) {
 
 	// Basic location information
         this.altitude  = null;
+        this.gnss_delta = null;
         this.speed     = null;
         this.track     = null;
         this.prev_position = null;
@@ -350,8 +351,10 @@ PlaneObject.prototype.updateData = function(receiver_timestamp, data) {
         this.rssi       = data.rssi;
 	this.last_message_time = receiver_timestamp - data.seen;
         
-        if (typeof data.altitude !== "undefined")
+        if (typeof data.altitude !== "undefined") {
 		this.altitude	= data.altitude;
+		this.gnss_delta	= data.gnss_delta;
+	}
         if (typeof data.vert_rate !== "undefined")
 		this.vert_rate	= data.vert_rate;
         if (typeof data.speed !== "undefined")
@@ -368,10 +371,8 @@ PlaneObject.prototype.updateData = function(receiver_timestamp, data) {
                         this.sitedist = WGS84.haversineDistance(SitePosition, this.position);
 			var delta = this.sitedist / R;
 			var SiteR = R + SiteHeight;
-			var PlaneR = R + this.altitude * 0.3048;
-		      //this.airdist = Math.hypot(this.sitedist, this.altitude * 0.3048 - SiteHight);
+			var PlaneR = R + (this.altitude + this.gnss_delta) * 0.3048;
                         this.airdist = Math.sqrt(SiteR*SiteR + PlaneR*PlaneR - 2*SiteR*PlaneR*Math.cos(delta));
-                      //this.elevation = Math.acos(this.sitedist / this.airdist) * 180 / Math.PI;
                         this.elevation = Math.asin((PlaneR*PlaneR - SiteR*SiteR - this.airdist*this.airdist) / (2*SiteR*this.airdist)) * 180 / Math.PI;
                         if (this.min_airdist == null || this.airdist < this.min_airdist)
                                 this.min_airdist = this.airdist;
