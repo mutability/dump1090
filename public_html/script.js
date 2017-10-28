@@ -758,10 +758,13 @@ function refreshSelected() {
                 $("#selected_vert_rate").text('n/a');
         } else if (selected.vert_rate == 0) {
                 $("#selected_vert_rate").text('0');
-        } else if (Math.abs(selected.vert_rate) < 100) {
-                $("#selected_vert_rate").text(Math.round(selected.vert_rate * 0.3048) + ' m/min');
         } else {
-                $("#selected_vert_rate").text(Math.round(selected.vert_rate * 0.3048) + ' m/min (' + Math.round(selected.vert_rate/50)*50 + ' ft)');
+                var vr_plus = selected.vert_rate > 0 ? '+' : '';
+                if (Math.abs(selected.vert_rate) < 100) {
+                        $("#selected_vert_rate").text(vr_plus + Math.round(selected.vert_rate * 0.3048) + ' m/min');
+                } else {
+                        $("#selected_vert_rate").text(vr_plus + Math.round(selected.vert_rate * 0.3048) + ' m/min (' + vr_plus + Math.round(selected.vert_rate/50)*50 + ' ft)');
+                }
         }
 
         if (selected.squawk === null || selected.squawk === '0000') {
