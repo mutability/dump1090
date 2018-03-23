@@ -15,7 +15,7 @@ EXTRACFLAGS=-DHTMLPATH=\"$(SHAREDIR)\"
 endif
 
 CPPFLAGS+=-DMODES_DUMP1090_VERSION=\"$(DUMP1090_VERSION)\"
-CFLAGS+=-O2 -g -Wall -Werror -W
+CFLAGS+=-O2 -g -Wall -Werror -W -Wno-unknown-warning-option -Wno-format-truncation
 LIBS=-lpthread -lm
 LIBS_RTL=`pkg-config --libs librtlsdr libusb-1.0`
 CC=gcc
