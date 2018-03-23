@@ -821,11 +821,16 @@ function refreshSelected() {
         else
                 $('#selected_minairdist').text('');
 
-        $('#selected_elevation').text(selected.elevation.toFixed(1) + DEGREES);
-        if (selected.max_elevation > selected.elevation)
-                $('#selected_maxelevation').text(' (max: ' + selected.max_elevation.toFixed(1) + DEGREES + ')');
-        else
+        if (selected.sitedist === null) {
+                $('#selected_elevation').text('n/a');
                 $('#selected_maxelevation').text('');
+        } else {
+                $('#selected_elevation').text(selected.elevation.toFixed(1) + DEGREES);
+                if (selected.max_elevation > selected.elevation)
+                        $('#selected_maxelevation').text(' (max: ' + selected.max_elevation.toFixed(1) + DEGREES + ')');
+                else
+                        $('#selected_maxelevation').text('');
+        }
 }
 
 // Refreshes the larger table of all the planes
