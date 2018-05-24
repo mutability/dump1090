@@ -8,7 +8,7 @@ The main features are:
 * Robust decoding of weak messages, with mode1090 many users observed
   improved range compared to other popular decoders.
 * Network support: TCP30003 stream (MSG5...), Raw packets, HTTP.
-* Embedded HTTP server that displays the currently detected aircrafts on
+* Embedded HTTP server that displays the currently detected aircraft on
   Google Map.
 * Single bit errors correction using the 24 bit CRC.
 * Ability to decode DF11, DF17 messages.
@@ -16,7 +16,7 @@ The main features are:
   where the checksum is xored with the ICAO address by brute forcing the
   checksum field using recently seen ICAO addresses.
 * Decode raw IQ samples from file (using --ifile command line switch).
-* Interactive command-line-interfae mode where aircrafts currently detected
+* Interactive command-line-interfae mode where aircraft currently detected
   are shown as a list refreshing as more data arrives.
 * CPR coordinates decoding and track calculation from velocity.
 * TCP server streaming and recceiving raw data to/from connected clients
@@ -50,7 +50,7 @@ with your browser to http://localhost:8080 to see live traffic:
 
 In iteractive mode it is possible to have a less information dense but more
 "arcade style" output, where the screen is refreshed every second displaying
-all the recently seen aircrafts with some additional information such as
+all the recently seen aircraft with some additional information such as
 altitude and flight number, extracted from the received Mode S packets.
 
 Using files as source of data
@@ -172,14 +172,14 @@ Antenna
 ---
 
 Mode S messages are transmitted in the 1090 Mhz frequency. If you have a decent
-antenna you'll be able to pick up signals from aircrafts pretty far from your
-position, especially if you are outdoor and in a position with a good sky view.
+antenna you'll be able to pick up signals from aircraft pretty far from your
+position, especially if you are outdoors and in a position with a good sky view.
 
-You can easily build a very cheap antenna following the istructions at:
+You can easily build a very cheap antenna following the instructions at:
 
-    http://antirez.com/news/46
+* http://antirez.com/news/46
 
-With this trivial antenna I was able to pick up signals of aircrafts 200+ Km
+With this trivial antenna I was able to pick up signals of aircraft 200+ Km
 away from me.
 
 If you are interested in a more serious antenna check the following
@@ -229,7 +229,7 @@ Debug mode includes an optional javascript output that is used to visualize
 packets using a web browser, you can use the file debug.html under the
 'tools' directory to load the generated frames.js file.
 
-How this program works?
+How does this program work?
 ---
 
 The code is very documented and written in order to be easy to understand.
@@ -237,17 +237,17 @@ For the diligent programmer with a Mode S specification on his hands it
 should be trivial to understand how it works.
 
 The algorithms I used were obtained basically looking at many messages
-as displayed using a trow-away SDL program, and trying to model the algorithm
+as displayed using a throw-away SDL program, and trying to model the algorithm
 based on how the messages look graphically.
 
 How to test the program?
 ---
 
 If you have an RTLSDR device and you happen to be in an area where there
-are aircrafts flying over your head, just run the program and check for signals.
+are aircraft flying over your head, just run the program and check for signals.
 
 However if you don't have an RTLSDR device, or if in your area the presence
-of aircrafts is very limited, you may want to try the sample file distributed
+of aircraft is very limited, you may want to try the sample file distributed
 with the Dump1090 distribution under the "testfiles" directory.
 
 Just run it like this:
