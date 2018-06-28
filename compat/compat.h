@@ -18,6 +18,11 @@
 # define le16toh(x) OSSwapLittleToHostInt16(x)
 # define le32toh(x) OSSwapLittleToHostInt32(x)
 
+#elif __FreeBSD__
+
+	#include <sys/types.h>
+	#include <sys/endian.h>
+
 #else // other platforms
 
 # include <endian.h>
