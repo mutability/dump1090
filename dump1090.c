@@ -98,23 +98,28 @@ static void sigtermHandler(int dummy) {
 //
 // =============================== Terminal handling ========================
 //
-#ifndef _WIN32
 // Get the number of rows after the terminal changes size.
-int getTermRows() { 
-    struct winsize w; 
-    ioctl(STDOUT_FILENO, TIOCGWINSZ, &w); 
-    return (w.ws_row); 
-} 
+int getTermRows() {
+#ifndef _WIN32
+    struct winsize w;
+    ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
+    return w.ws_row;
+#else
+    CONSOLE_SCREEN_BUFFER_INFO w;
+    HANDLE hStdout = GetStdHandle(STD_OUTPUT_HANDLE);
+    GetConsoleScreenBufferInfo(hStdout, &w);
+    return (int)w.dwSize.Y;
+#endif
+}
 
+#ifndef _WIN32
 // Handle resizing terminal
 void sigWinchCallback() {
     signal(SIGWINCH, SIG_IGN);
     Modes.interactive_rows = getTermRows();
     interactiveShowData();
-    signal(SIGWINCH, sigWinchCallback); 
+    signal(SIGWINCH, sigWinchCallback);
 }
-#else 
-int getTermRows() { return MODES_INTERACTIVE_ROWS;}
 #endif
 
 static void start_cpu_timing(struct timespec *start_time)
@@ -559,7 +564,7 @@ void readDataFromFile(void) {
                 eof = 1;
                 break;
             }
-            r += nread;
+            r = (char *)r + nread;
             toread -= nread;
         }
 
@@ -639,11 +644,8 @@ void *readerThreadEntryPoint(void *arg) {
     pthread_cond_signal(&Modes.data_cond);
     pthread_mutex_unlock(&Modes.data_mutex);
 
-#ifndef _WIN32
     pthread_exit(NULL);
-#else
     return NULL;
-#endif
 }
 //
 // ============================== Snip mode =================================
@@ -1102,7 +1104,6 @@ int main(int argc, char **argv) {
             // Ignored
         } else if (!strcmp(argv[j], "--html-dir") && more) {
             Modes.html_dir = strdup(argv[++j]);
-#ifndef _WIN32
         } else if (!strcmp(argv[j], "--write-json") && more) {
             Modes.json_dir = strdup(argv[++j]);
         } else if (!strcmp(argv[j], "--write-json-every") && more) {
@@ -1111,7 +1112,6 @@ int main(int argc, char **argv) {
                 Modes.json_interval = 100;
         } else if (!strcmp(argv[j], "--json-location-accuracy") && more) {
             Modes.json_location_accuracy = atoi(argv[++j]);
-#endif
         } else {
             fprintf(stderr,
                 "Unknown or not enough arguments for option '%s'.\n\n",
@@ -1120,11 +1120,6 @@ int main(int argc, char **argv) {
             exit(1);
         }
     }
-
-#ifdef _WIN32
-    // Try to comply with the Copyright license conditions for binary distribution
-    if (!Modes.quiet) {showCopyright();}
-#endif
 
 #ifndef _WIN32
     // Setup for SIGWINCH for handling lines
@@ -1144,13 +1139,7 @@ int main(int argc, char **argv) {
     } else {
         if (Modes.filename[0] == '-' && Modes.filename[1] == '\0') {
             Modes.fd = STDIN_FILENO;
-        } else if ((Modes.fd = open(Modes.filename,
-#ifdef _WIN32
-                                    (O_RDONLY | O_BINARY)
-#else
-                                    (O_RDONLY)
-#endif
-                                    )) == -1) {
+        } else if ((Modes.fd = open(Modes.filename, OPEN_FLAGS)) == -1) {
             perror("Opening data file");
             exit(1);
         }
@@ -1275,11 +1264,8 @@ int main(int argc, char **argv) {
     cleanup_converter(Modes.converter_state);
     log_with_timestamp("Normal exit.");
 
-#ifndef _WIN32
     pthread_exit(0);
-#else
-    return (0);
-#endif
+    return 0;
 }
 //
 //=========================================================================

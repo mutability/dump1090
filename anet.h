@@ -56,21 +56,33 @@
 
 #define ANET_OK 0
 #define ANET_ERR -1
-#define ANET_ERR_LEN 256
+#define ANET_ERR_LEN 1024
 
 #if defined(__sun)
 #define AF_LOCAL AF_UNIX
 #endif
 
-int anetTcpConnect(char *err, char *addr, char *service);
-int anetTcpNonBlockConnect(char *err, char *addr, char *service);
-int anetRead(int fd, char *buf, int count);
-int anetTcpServer(char *err, char *service, char *bindaddr, int *fds, int nfds);
-int anetTcpAccept(char *err, int serversock);
-int anetWrite(int fd, char *buf, int count);
-int anetNonBlock(char *err, int fd);
-int anetTcpNoDelay(char *err, int fd);
-int anetTcpKeepAlive(char *err, int fd);
-int anetSetSendBuffer(char *err, int fd, int buffsize);
+#ifdef _WIN32
+#include <winsock2.h>
+
+#define WSAEAGAIN WSAEWOULDBLOCK
+
+typedef SOCKET socket_t;
+#else
+typedef int socket_t;
+#endif
+
+int anetInit(char *err);
+int anetCloseConnection(socket_t fd);
+socket_t anetTcpConnect(char *err, char *addr, char *service);
+socket_t anetTcpNonBlockConnect(char *err, char *addr, char *service);
+int anetRead(socket_t fd, char *buf, int count);
+int anetTcpServer(char *err, char *service, char *bindaddr, socket_t *fds, int nfds);
+socket_t anetTcpAccept(char *err, socket_t serversock);
+int anetWrite(socket_t fd, char *buf, int count);
+int anetNonBlock(char *err, socket_t fd);
+int anetTcpNoDelay(char *err, socket_t fd);
+int anetTcpKeepAlive(char *err, socket_t fd);
+int anetSetSendBuffer(char *err, socket_t fd, int buffsize);
 
 #endif

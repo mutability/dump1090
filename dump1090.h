@@ -61,25 +61,85 @@
 
 // ============================= Include files ==========================
 
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <pthread.h>
+#include <stdint.h>
+#include <errno.h>
+#include <math.h>
+#include <signal.h>
+#include <fcntl.h>
+#include <ctype.h>
+#include <sys/stat.h>
+#include <time.h>
+#include <limits.h>
+
+#define CONCAT(A, B) A ## B
+
 #ifndef _WIN32
-    #include <stdio.h>
-    #include <string.h>
-    #include <stdlib.h>
-    #include <pthread.h>
-    #include <stdint.h>
-    #include <errno.h>
-    #include <unistd.h>
-    #include <math.h>
-    #include <sys/time.h>
-    #include <signal.h>
-    #include <fcntl.h>
-    #include <ctype.h>
-    #include <sys/stat.h>
-    #include <sys/ioctl.h>
-    #include <time.h>
-    #include <limits.h>
+
+#include <unistd.h>
+#include <sys/time.h>
+#include <sys/ioctl.h>
+
+#define OPEN_FLAGS O_RDONLY
+
+#define sockErrorIs(A) (errno == CONCAT(E, A))
+
 #else
-    #include "winstubs.h" //Put everything Windows specific in here
+
+#define __attribute__(A)
+
+#include <io.h>
+#include <winsock2.h>
+#include <windows.h>
+
+#include "compat/win32_clock_nanosleep.h"
+
+typedef intptr_t ssize_t;
+
+#define M_PI 3.14159265358979323846264338327950288
+#define STDIN_FILENO _fileno(stdin)
+#define STDOUT_FILENO _fileno(stdout)
+
+#ifndef PATH_MAX
+#define PATH_MAX 260
+#endif
+
+#define OPEN_FLAGS (O_RDONLY | O_BINARY)
+
+#define sockErrorIs(A) (WSAGetLastError() == CONCAT(WSAE, A))
+
+#define realpath(P, R) strcpy(R, P)
+
+static inline struct tm *localtime_r(const time_t *timep, struct tm *result)
+{
+    localtime_s(result, timep);
+    return result;
+}
+
+static inline int usleep(__int64 usec)
+{
+    struct timespec ts;
+
+    ts.tv_sec = (time_t)usec / 1000000;
+    ts.tv_nsec = (long)(usec % 1000000) * 1000;
+
+    int err = clock_nanosleep(CLOCK_MONOTONIC, 0, &ts, NULL);
+
+    if (err != 0)
+    {
+        errno = err;
+        return -1;
+    }
+
+    return 0;
+}
+
+#define sleep(sec) usleep((sec) * 1000000ULL)
+#define strcasecmp stricmp
+
 #endif
 
 #include "compat/compat.h"
@@ -308,10 +368,6 @@ struct {                             // Internal state
     struct net_writer beast_out;     // Beast-format output
     struct net_writer sbs_out;       // SBS-format output
     struct net_writer fatsv_out;     // FATSV-format output
-
-#ifdef _WIN32
-    WSADATA        wsaData;          // Windows socket initialisation
-#endif
 
     // Configuration
     char *filename;                  // Input form file, --ifile option

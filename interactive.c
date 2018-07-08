@@ -93,7 +93,7 @@ void interactiveShowData(void) {
 #ifndef _WIN32
     printf("\x1b[H\x1b[2J");    // Clear the screen
 #else
-    cls();
+    system("cls");
 #endif
 
     if (Modes.interactive_rtl1090 == 0) {

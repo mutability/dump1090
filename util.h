@@ -21,6 +21,7 @@
 #define DUMP1090_UTIL_H
 
 #include <stdint.h>
+#include <time.h>
 
 /* Returns system time in milliseconds */
 uint64_t mstime(void);
@@ -33,7 +34,6 @@ int64_t receiveclock_ns_elapsed(uint64_t t1, uint64_t t2);
 /* Normalize the value in ts so that ts->nsec lies in
  * [0,999999999]
  */
-struct timespec;
 void normalize_timespec(struct timespec *ts);
 
 #endif

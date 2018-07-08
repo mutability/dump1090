@@ -23,6 +23,10 @@
 
 #include "cpr.h"
 
+#ifdef _WIN32
+#define __attribute__(A)
+#endif
+
 // Global, airborne CPR test data:
 static const struct {
     int even_cprlat, even_cprlon;   // input: raw CPR values, even message

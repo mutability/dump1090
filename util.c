@@ -50,6 +50,23 @@
 #include "util.h"
 
 #include <stdlib.h>
+
+#ifdef _WIN32
+
+#include <windows.h>
+
+#define WIN_EPOCH_DELTA 116444736000000000LL
+
+uint64_t mstime(void)
+{
+    FILETIME ft;
+
+    GetSystemTimeAsFileTime(&ft);
+    return ((((int64_t)ft.dwHighDateTime << 32) | ft.dwLowDateTime) - WIN_EPOCH_DELTA) / 10000;
+}
+
+#else
+
 #include <sys/time.h>
 
 uint64_t mstime(void)
@@ -62,6 +79,8 @@ uint64_t mstime(void)
     mst += tv.tv_usec/1000;
     return mst;
 }
+
+#endif
 
 int64_t receiveclock_ns_elapsed(uint64_t t1, uint64_t t2)
 {

@@ -34,7 +34,7 @@ struct net_service {
     struct net_service* next;
     const char *descr;
     int listener_count;  // number of listeners
-    int *listener_fds;   // listening FDs
+    socket_t *listener_fds;   // listening FDs
 
     int connections;     // number of active clients
 
@@ -47,7 +47,7 @@ struct net_service {
 // Structure used to describe a networking client
 struct client {
     struct client*  next;                // Pointer to next client
-    int    fd;                           // File descriptor
+    socket_t fd;                           // File descriptor
     struct net_service *service;         // Service this client is part of
     int    buflen;                       // Amount of data on buffer
     char   buf[MODES_CLIENT_BUF_SIZE+1]; // Read buffer
@@ -65,8 +65,8 @@ struct net_writer {
 struct net_service *serviceInit(const char *descr, struct net_writer *writer, heartbeat_fn hb_handler, const char *sep, read_fn read_handler);
 struct client *serviceConnect(struct net_service *service, char *addr, int port);
 void serviceListen(struct net_service *service, char *bind_addr, char *bind_ports);
-struct client *createSocketClient(struct net_service *service, int fd);
-struct client *createGenericClient(struct net_service *service, int fd);
+struct client *createSocketClient(struct net_service *service, socket_t fd);
+struct client *createGenericClient(struct net_service *service, socket_t fd);
 
 // view1090 / faup1090 want to create these themselves:
 struct net_service *makeBeastInputService(void);

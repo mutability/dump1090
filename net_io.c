@@ -122,14 +122,14 @@ struct net_service *serviceInit(const char *descr, struct net_writer *writer, he
 }
 
 // Create a client attached to the given service using the provided socket FD
-struct client *createSocketClient(struct net_service *service, int fd)
+struct client *createSocketClient(struct net_service *service, socket_t fd)
 {
     anetSetSendBuffer(Modes.aneterr, fd, (MODES_NET_SNDBUF_SIZE << Modes.net_sndbuf_size));
     return createGenericClient(service, fd);
 }
 
 // Create a client attached to the given service using the provided FD (might not be a socket!)
-struct client *createGenericClient(struct net_service *service, int fd)
+struct client *createGenericClient(struct net_service *service, socket_t fd)
 {
     struct client *c;
 
@@ -158,7 +158,7 @@ struct client *createGenericClient(struct net_service *service, int fd)
 // Return the new client or NULL if the connection failed
 struct client *serviceConnect(struct net_service *service, char *addr, int port)
 {
-    int s;
+    socket_t s;
     char buf[20];
 
     // Bleh.
@@ -174,7 +174,7 @@ struct client *serviceConnect(struct net_service *service, char *addr, int port)
 // _exits_ on failure!
 void serviceListen(struct net_service *service, char *bind_addr, char *bind_ports)
 {
-    int *fds = NULL;
+    socket_t *fds = NULL;
     int n = 0;
     char *p, *end;
     char buf[128];
@@ -189,7 +189,7 @@ void serviceListen(struct net_service *service, char *bind_addr, char *bind_port
 
     p = bind_ports;
     while (p && *p) {
-        int newfds[16];
+        socket_t newfds[16];
         int nfds, i;
 
         end = strpbrk(p, ", ");
@@ -213,7 +213,7 @@ void serviceListen(struct net_service *service, char *bind_addr, char *bind_port
             exit(1);
         }
 
-        fds = realloc(fds, (n+nfds) * sizeof(int));
+        fds = realloc(fds, (n+nfds) * sizeof(socket_t));
         if (!fds) {
             fprintf(stderr, "out of memory\n");
             exit(1);
@@ -242,9 +242,17 @@ struct net_service *makeFatsvOutputService(void)
 void modesInitNet(void) {
     struct net_service *s;
 
+#ifndef _WIN32
     signal(SIGPIPE, SIG_IGN);
+#endif
+
     Modes.clients = NULL;
     Modes.services = NULL;
+
+    if (anetInit(Modes.aneterr) == ANET_ERR) {
+        fprintf(stderr, "Error initializing networking: %s\n", Modes.aneterr);
+        exit(1);
+    }
 
     // set up listeners
     s = serviceInit("Raw TCP output", &Modes.raw_out, send_raw_heartbeat, NULL, NULL);
@@ -274,7 +282,7 @@ void modesInitNet(void) {
 // awakened by new data arriving. This usually happens a few times every second
 //
 static struct client * modesAcceptClients(void) {
-    int fd;
+    socket_t fd;
     struct net_service *s;
 
     for (s = Modes.services; s; s = s->next) {
@@ -304,7 +312,7 @@ static void modesCloseClient(struct client *c) {
     // client (unpredictably: reading from client A may cause client B to
     // be freed)
 
-    close(c->fd);
+    anetCloseConnection(c->fd);
     c->service->connections--;
 
     // mark it as inactive and ready to be freed
@@ -323,11 +331,8 @@ static void flushWrites(struct net_writer *writer) {
         if (!c->service)
             continue;
         if (c->service == writer->service) {
-#ifndef _WIN32
-            int nwritten = write(c->fd, writer->data, writer->dataUsed);
-#else
-            int nwritten = send(c->fd, writer->data, writer->dataUsed, 0 );
-#endif
+            int nwritten = anetWrite(c->fd, writer->data, writer->dataUsed);
+
             if (nwritten != writer->dataUsed) {
                 modesCloseClient(c);
             }
@@ -355,14 +360,14 @@ static void *prepareWrite(struct net_writer *writer, int len) {
         flushWrites(writer);
     }
 
-    return writer->data + writer->dataUsed;
+    return (char *)writer->data + writer->dataUsed;
 }
 
 // Complete a write previously begun by prepareWrite.
 // endptr should point one byte past the last byte written
 // to the buffer returned from prepareWrite.
 static void completeWrite(struct net_writer *writer, void *endptr) {
-    writer->dataUsed = endptr - writer->data;
+    writer->dataUsed = (char *)endptr - (char *)writer->data;
 
     if (writer->dataUsed >= Modes.net_output_flush_size) {
         flushWrites(writer);
@@ -1297,26 +1302,34 @@ char *generateHistoryJson(const char *url_path, int *len)
 // Write JSON to file
 void writeJsonToFile(const char *file, char * (*generator) (const char *,int*))
 {
-#ifndef _WIN32
     char pathbuf[PATH_MAX];
     char tmppath[PATH_MAX];
     int fd;
     int len = 0;
-    mode_t mask;
     char *content;
 
     if (!Modes.json_dir)
         return;
 
+#ifdef _WIN32
+    snprintf(tmppath, PATH_MAX, "%s/%s.%lli", Modes.json_dir, file, mstime());
+    tmppath[PATH_MAX - 1] = 0;
+    fd = open(tmppath, _O_CREAT | _O_RDWR | _O_BINARY, _S_IREAD | _S_IWRITE);
+
+    if (fd < 0)
+        return;
+#else
     snprintf(tmppath, PATH_MAX, "%s/%s.XXXXXX", Modes.json_dir, file);
     tmppath[PATH_MAX-1] = 0;
     fd = mkstemp(tmppath);
+
     if (fd < 0)
         return;
     
-    mask = umask(0);
+    mode_t mask = umask(0);
     umask(mask);
     fchmod(fd, 0644 & ~mask);
+#endif
 
     snprintf(pathbuf, PATH_MAX, "/data/%s", file);
     pathbuf[PATH_MAX-1] = 0;
@@ -1330,6 +1343,9 @@ void writeJsonToFile(const char *file, char * (*generator) (const char *,int*))
 
     snprintf(pathbuf, PATH_MAX, "%s/%s", Modes.json_dir, file);
     pathbuf[PATH_MAX-1] = 0;
+#ifdef _WIN32 // Windows doesn't replace
+    unlink(pathbuf);
+#endif
     rename(tmppath, pathbuf);
     free(content);
     return;
@@ -1340,7 +1356,6 @@ void writeJsonToFile(const char *file, char * (*generator) (const char *,int*))
     unlink(tmppath);
     free(content);
     return;
-#endif
 }
 
 
@@ -1394,12 +1409,11 @@ static int handleHTTPRequest(struct client *c, char *p) {
     httpver = (strstr(p, "HTTP/1.1") != NULL) ? 11 : 10;
     if (httpver == 10) {
         // HTTP 1.0 defaults to close, unless otherwise specified.
-        //keepalive = strstr(p, "Connection: keep-alive") != NULL;
+        keepalive = strstr(p, "Connection: keep-alive") != NULL;
     } else if (httpver == 11) {
         // HTTP 1.1 defaults to keep-alive, unless close is specified.
-        //keepalive = strstr(p, "Connection: close") == NULL;
+        keepalive = strstr(p, "Connection: close") == NULL;
     }
-    keepalive = 0;
 
     // Identify he URL.
     p = strchr(p,' ');
@@ -1457,7 +1471,7 @@ static int handleHTTPRequest(struct client *c, char *p) {
         clen = -1;
         content = strdup("Server error occured");
         if (!strncmp(hrp, rp, strlen(hrp))) {
-            if (stat(getFile, &sbuf) != -1 && (fd = open(getFile, O_RDONLY)) != -1) {
+            if (stat(getFile, &sbuf) != -1 && (fd = open(getFile, OPEN_FLAGS)) != -1) {
                 content = (char *) realloc(content, sbuf.st_size);
                 if (read(fd, content, sbuf.st_size) == sbuf.st_size) {
                     clen = sbuf.st_size;
@@ -1521,17 +1535,9 @@ static int handleHTTPRequest(struct client *c, char *p) {
         printf("HTTP Reply header:\n%s", hdr);
     }
 
-    /* hack hack hack. try to deal with large content */
-    anetSetSendBuffer(Modes.aneterr, c->fd, clen + hdrlen);
-
     // Send header and content.
-#ifndef _WIN32
-    if ( (write(c->fd, hdr, hdrlen) != hdrlen) 
-      || (write(c->fd, content, clen) != clen) )
-#else
-    if ( (send(c->fd, hdr, hdrlen, 0) != hdrlen) 
-      || (send(c->fd, content, clen, 0) != clen) )
-#endif
+    if ( (anetWrite(c->fd, hdr, hdrlen) != hdrlen)
+      || (anetWrite(c->fd, content, clen) != clen) )
     {
         free(content);
         return 1;
@@ -1575,12 +1581,8 @@ static void modesReadFromClient(struct client *c) {
             left = MODES_CLIENT_BUF_SIZE;
             // If there is garbage, read more to discard it ASAP
         }
-#ifndef _WIN32
-        nread = read(c->fd, c->buf+c->buflen, left);
-#else
-        nread = recv(c->fd, c->buf+c->buflen, left, 0);
-        if (nread < 0) {errno = WSAGetLastError();}
-#endif
+
+        nread = anetRead(c->fd, c->buf+c->buflen, left);
 
         // If we didn't get all the data we asked for, then return once we've processed what we did get.
         if (nread != left) {
@@ -1592,11 +1594,7 @@ static void modesReadFromClient(struct client *c) {
             return;
         }
 
-#ifndef _WIN32
-        if (nread < 0 && (errno == EAGAIN || errno == EWOULDBLOCK)) // No data available (not really an error)
-#else
-        if (nread < 0 && errno == EWOULDBLOCK) // No data available (not really an error)
-#endif
+        if (nread < 0 && (sockErrorIs(AGAIN) || sockErrorIs(WOULDBLOCK))) // No data available (not really an error)
         {
             return;
         }
