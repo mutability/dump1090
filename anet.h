@@ -55,22 +55,29 @@
 #define ANET_H
 
 #define ANET_OK 0
-#define ANET_ERR -1
+#define ANET_ERR (socket_t)-1
 #define ANET_ERR_LEN 1024
+
+#define ANET_CONCAT(A, B) A ## B
 
 #if defined(__sun)
 #define AF_LOCAL AF_UNIX
 #endif
 
-#ifdef _WIN32
+#ifndef _WIN32
+
+#define anetErrorIs(A) (errno == ANET_CONCAT(E, A))
+typedef int socket_t;
+
+#else // _WIN32
+
 #include <winsock2.h>
 
 #define WSAEAGAIN WSAEWOULDBLOCK
-
+#define anetErrorIs(A) (WSAGetLastError() == ANET_CONCAT(WSAE, A))
 typedef SOCKET socket_t;
-#else
-typedef int socket_t;
-#endif
+
+#endif // _WIN32
 
 int anetInit(char *err);
 int anetCloseConnection(socket_t fd);

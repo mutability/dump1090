@@ -18,20 +18,9 @@
 # define le16toh(x) OSSwapLittleToHostInt16(x)
 # define le32toh(x) OSSwapLittleToHostInt32(x)
 
-#elif defined(_MSC_VER)
+#elif defined(_WIN32)
 
-#include <stdlib.h>
-#include <stdint.h>
-
-#define bswap_16 _byteswap_ushort
-#define bswap_32 _byteswap_ulong
-#define bswap_64 _byteswap_uint64
-
-#define le16toh(x) (x)
-#define le32toh(x) (x)
-
-#include "win32_clock_nanosleep.h"
-#include "win32_clock_gettime.h"
+#include "win32/win32_compat.h"
 
 #else // other platforms
 

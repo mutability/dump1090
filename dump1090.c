@@ -112,15 +112,14 @@ int getTermRows() {
 #endif
 }
 
-#ifndef _WIN32
 // Handle resizing terminal
-void sigWinchCallback() {
+void sigWinchCallback(int dummy) {
+    MODES_NOTUSED(dummy);
     signal(SIGWINCH, SIG_IGN);
     Modes.interactive_rows = getTermRows();
     interactiveShowData();
     signal(SIGWINCH, sigWinchCallback);
 }
-#endif
 
 static void start_cpu_timing(struct timespec *start_time)
 {
@@ -1121,10 +1120,8 @@ int main(int argc, char **argv) {
         }
     }
 
-#ifndef _WIN32
     // Setup for SIGWINCH for handling lines
     if (Modes.interactive) {signal(SIGWINCH, sigWinchCallback);}
-#endif
 
     // Initialization
     log_with_timestamp("%s %s starting up.", MODES_DUMP1090_VARIANT, MODES_DUMP1090_VERSION);
@@ -1139,7 +1136,7 @@ int main(int argc, char **argv) {
     } else {
         if (Modes.filename[0] == '-' && Modes.filename[1] == '\0') {
             Modes.fd = STDIN_FILENO;
-        } else if ((Modes.fd = open(Modes.filename, OPEN_FLAGS)) == -1) {
+        } else if ((Modes.fd = open(Modes.filename, O_RDONLY)) == -1) {
             perror("Opening data file");
             exit(1);
         }
@@ -1265,7 +1262,7 @@ int main(int argc, char **argv) {
     log_with_timestamp("Normal exit.");
 
     pthread_exit(0);
-    return 0;
+    return (0);
 }
 //
 //=========================================================================

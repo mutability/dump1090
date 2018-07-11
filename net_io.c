@@ -242,9 +242,7 @@ struct net_service *makeFatsvOutputService(void)
 void modesInitNet(void) {
     struct net_service *s;
 
-#ifndef _WIN32
     signal(SIGPIPE, SIG_IGN);
-#endif
 
     Modes.clients = NULL;
     Modes.services = NULL;
@@ -288,7 +286,7 @@ static struct client * modesAcceptClients(void) {
     for (s = Modes.services; s; s = s->next) {
         int i;
         for (i = 0; i < s->listener_count; ++i) {
-            while ((fd = anetTcpAccept(Modes.aneterr, s->listener_fds[i])) >= 0) {
+            while ((fd = anetTcpAccept(Modes.aneterr, s->listener_fds[i])) != ANET_ERR) {
                 createSocketClient(s, fd);
             }
         }
@@ -1314,7 +1312,7 @@ void writeJsonToFile(const char *file, char * (*generator) (const char *,int*))
 #ifdef _WIN32
     snprintf(tmppath, PATH_MAX, "%s/%s.%lli", Modes.json_dir, file, mstime());
     tmppath[PATH_MAX - 1] = 0;
-    fd = open(tmppath, _O_CREAT | _O_RDWR | _O_BINARY, _S_IREAD | _S_IWRITE);
+    fd = open(tmppath, O_CREAT | O_RDWR, S_IREAD | S_IWRITE);
 
     if (fd < 0)
         return;
@@ -1471,7 +1469,7 @@ static int handleHTTPRequest(struct client *c, char *p) {
         clen = -1;
         content = strdup("Server error occured");
         if (!strncmp(hrp, rp, strlen(hrp))) {
-            if (stat(getFile, &sbuf) != -1 && (fd = open(getFile, OPEN_FLAGS)) != -1) {
+            if (stat(getFile, &sbuf) != -1 && (fd = open(getFile, O_RDONLY)) != -1) {
                 content = (char *) realloc(content, sbuf.st_size);
                 if (read(fd, content, sbuf.st_size) == sbuf.st_size) {
                     clen = sbuf.st_size;
@@ -1594,7 +1592,7 @@ static void modesReadFromClient(struct client *c) {
             return;
         }
 
-        if (nread < 0 && (sockErrorIs(AGAIN) || sockErrorIs(WOULDBLOCK))) // No data available (not really an error)
+        if (nread < 0 && (anetErrorIs(AGAIN) || anetErrorIs(WOULDBLOCK))) // No data available (not really an error)
         {
             return;
         }

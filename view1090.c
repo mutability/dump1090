@@ -53,15 +53,14 @@ int getTermRows() {
 #endif
 } 
 
-#ifndef _WIN32
 // Handle resizing terminal
-void sigWinchCallback() {
+void sigWinchCallback(int dummy) {
+    MODES_NOTUSED(dummy);
     signal(SIGWINCH, SIG_IGN);
     Modes.interactive_rows = getTermRows();
     interactiveShowData();
     signal(SIGWINCH, sigWinchCallback); 
 }
-#endif
 //
 // =============================== Initialization ===========================
 //
@@ -200,10 +199,8 @@ int main(int argc, char **argv) {
         }
     }
 
-#ifndef _WIN32
     // Setup for SIGWINCH for handling lines
     if (Modes.interactive) {signal(SIGWINCH, sigWinchCallback);}
-#endif
 
     // Initialization
     view1090Init();

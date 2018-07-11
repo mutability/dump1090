@@ -73,7 +73,6 @@
 #include <unistd.h>
 #include <netdb.h>
 
-#define anetErrorIs(A) (errno == CONCAT(E, A))
 #define anetErrorString() strerror(errno)
 
 #else
@@ -84,8 +83,6 @@
 #include <windows.h>
 
 #define setsockopt(A, B, C, D, E) setsockopt(A, B, C, (const char *)(D), E)
-
-#define anetErrorIs(A) (WSAGetLastError() == CONCAT(WSAE, A))
 
 static inline const char *anetErrorString()
 {
@@ -144,8 +141,8 @@ int anetNonBlock(char *err, socket_t fd)
     int flags;
 
     /* Set the socket nonblocking.
-    * Note that fcntl(2) for F_GETFL and F_SETFL can't be
-    * interrupted by a signal. */
+     * Note that fcntl(2) for F_GETFL and F_SETFL can't be
+     * interrupted by a signal. */
     if ((flags = fcntl(fd, F_GETFL)) == -1) {
         anetSetError(err, "fcntl(F_GETFL): %s", anetErrorString());
         return ANET_ERR;

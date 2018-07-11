@@ -130,8 +130,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\anet.c" />
-    <ClCompile Include="..\compat\win32_clock_gettime.c" />
-    <ClCompile Include="..\compat\win32_clock_nanosleep.c" />
+    <ClCompile Include="..\compat\win32\win32_clock_gettime.c" />
+    <ClCompile Include="..\compat\win32\win32_clock_nanosleep.c" />
     <ClCompile Include="..\convert.c" />
     <ClCompile Include="..\cpr.c" />
     <ClCompile Include="..\crc.c" />
@@ -149,8 +149,9 @@
   <ItemGroup>
     <ClInclude Include="..\anet.h" />
     <ClInclude Include="..\compat\compat.h" />
-    <ClInclude Include="..\compat\win32_clock_gettime.h" />
-    <ClInclude Include="..\compat\win32_clock_nanosleep.h" />
+    <ClInclude Include="..\compat\win32\win32_clock_gettime.h" />
+    <ClInclude Include="..\compat\win32\win32_clock_nanosleep.h" />
+    <ClInclude Include="..\compat\win32\win32_compat.h" />
     <ClInclude Include="..\convert.h" />
     <ClInclude Include="..\cpr.h" />
     <ClInclude Include="..\crc.h" />
