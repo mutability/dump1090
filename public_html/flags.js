@@ -170,6 +170,7 @@ var ICAO_Ranges = [
         { start: 0x4A8000, end: 0x4AFFFF, country: "Sweden", flag_image: "Sweden.png" },
         { start: 0x4B0000, end: 0x4B7FFF, country: "Switzerland", flag_image: "Switzerland.png" },
         { start: 0x778000, end: 0x77FFFF, country: "Syrian Arab Republic", flag_image: "Syria.png" },
+        { start: 0x899000, end: 0x8993FF, country: "Taiwan", flag_image: "Taiwan.png" },
         { start: 0x515000, end: 0x5153FF, country: "Tajikistan", flag_image: "Tajikistan.png" },
         { start: 0x880000, end: 0x887FFF, country: "Thailand", flag_image: "Thailand.png" },
         { start: 0x512000, end: 0x5123FF, country: "The former Yugoslav Republic of Macedonia", flag_image: "Macedonia.png" },
