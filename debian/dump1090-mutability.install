@@ -1,4 +1,0 @@
-public_html/* usr/share/dump1090-mutability/html
-debian/lighttpd/* etc/lighttpd/conf-available
-debian/nginx/* etc/nginx/sites-available
-debian/config-template usr/share/dump1090-mutability
